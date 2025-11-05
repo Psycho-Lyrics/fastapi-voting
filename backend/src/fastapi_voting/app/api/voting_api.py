@@ -6,7 +6,9 @@ from src.fastapi_voting.app.di.annotations import (
     CSRFValidAnnotation
 )
 from src.fastapi_voting.app.schemas.voting_schema import (
-    InputCreateVotingSchema, ResponseCreateVotingSchema, InputDeleteVotingSchema
+    VotingSchema,
+    InputCreateVotingSchema,
+    InputDeleteVotingSchema,
 )
 
 
@@ -17,21 +19,32 @@ voting_router = APIRouter(
 )
 
 # --- Обработчики ---
-@voting_router.get(path="/all")
+@voting_router.get(path="/all", response_model=list[VotingSchema])
 async def get_all_votings(
+        access_payload: AccessRequiredAnnotation,
         voting_service: VotingServiceAnnotation
 ):
-    # TODO: Список голосований
-    pass
+    # TODO: Полнотекстовый поиск
+    # TODO: Пагинация
+    # --- Работа сервиса ---
+    user_id = access_payload["sub"]
+    votings = await voting_service.get_all_votings(user_id)
+
+    # --- Ответ ---
+    return votings
 
 
-@voting_router.post(path="/create", response_model=ResponseCreateVotingSchema)
+@voting_router.post(path="/create", response_model=VotingSchema)
 async def create_voting(
         access_payload: AccessRequiredAnnotation,
 
         voting_service: VotingServiceAnnotation,
         voting_data: InputCreateVotingSchema,
 ):
+    # --- Первичные данные ---
+    voting_data = voting_data.model_dump()
+    voting_data["creator_id"] = access_payload["sub"]
+
     # --- Работа сервиса ---
     result = await voting_service.create_voting(voting_data)
 
