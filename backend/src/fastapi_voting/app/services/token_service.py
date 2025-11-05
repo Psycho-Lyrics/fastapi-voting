@@ -31,7 +31,7 @@ class TokenService:
             "sub": str(user_id),
             "token_type": "access",
             "jti": str(uuid.uuid4()),
-            "exp": str(exp.timestamp()),
+            "exp": int(exp.timestamp()),
             "iat": int(now.timestamp())
         }
         access_token: str = jwt.encode(payload, settings.JWT_SECRET_KEY, algorithm="HS256")
