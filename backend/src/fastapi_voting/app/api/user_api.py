@@ -112,8 +112,11 @@ async def user_refresh(
         token_service : TokenServiceAnnotation,
 ):
     # --- Первичные данные ---
-    user_id = refresh_payload["user_id"]
+    user_id = refresh_payload["sub"]
     cookie_expire = datetime.now(timezone.utc) + timedelta(days=settings.JWT_REFRESH_EXPIRE_DAYS)
+
+    # --- Ротация старого refresh-токена ---
+    await token_service.revoke_token(refresh_payload)
 
     # --- Генерация токенов ---
     tokens = token_service.create_tokens(user_id, refresh=True)

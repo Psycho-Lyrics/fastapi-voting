@@ -26,22 +26,26 @@ class TokenService:
 
         # --- Access-Token ---
         exp = datetime.now() + timedelta(minutes=settings.JWT_ACCESS_EXPIRE_MINUTES)
+        now = datetime.now(timezone.utc)
         payload = {
             "sub": str(user_id),
             "token_type": "access",
             "jti": str(uuid.uuid4()),
-            "iat": int(exp.timestamp())
+            "exp": str(exp.timestamp()),
+            "iat": int(now.timestamp())
         }
         access_token: str = jwt.encode(payload, settings.JWT_SECRET_KEY, algorithm="HS256")
-
+        # TODO: Дублирование кода. Пересмотреть
         # --- Refresh-Token ---
         if refresh:
             exp = datetime.now() + timedelta(days=settings.JWT_REFRESH_EXPIRE_DAYS)
+            now = datetime.now(timezone.utc)
             refresh_payload = {
                 "sub": str(user_id),
                 "token_type": "refresh",
                 "jti": str(uuid.uuid4()),
-                "iat": int(exp.timestamp())
+                "exp": str(exp.timestamp()),
+                "iat": int(now.timestamp())
             }
             refresh_token: str = jwt.encode(refresh_payload, settings.JWT_SECRET_KEY, algorithm="HS256")
 
@@ -62,18 +66,10 @@ class TokenService:
     async def revoke_token(self, token_payload: dict[str, str]) -> None:
         """Досрочно отзывает переданный токен"""
 
-        # --- Вспомогательные данные ---
-        now = datetime.now(timezone.utc)
-        get_ttl = {
-            "access": lambda: now + timedelta(minutes=settings.JWT_ACCESS_EXPIRE_MINUTES),
-            "refresh": lambda: now + timedelta(days=settings.JWT_REFRESH_EXPIRE_DAYS)
-        }
-
         # --- Первичные данные ---
-        token_type = token_payload["token_type"]
-        ttl = get_ttl[token_type]()
-        ttl = int(ttl.timestamp())
+        actual_expire = datetime.fromtimestamp(float(token_payload["exp"]), timezone.utc)
+        ttl: timedelta = actual_expire - datetime.now(timezone.utc)
 
         # --- Размещение записи о токене ---
-        await self.redis.set(name=f"jwt-block:{token_payload['jti']}", value="1", ex=ttl)
+        await self.redis.set(name=f"jwt-block:{token_payload['jti']}", value="1", ex=ttl.seconds)
 
