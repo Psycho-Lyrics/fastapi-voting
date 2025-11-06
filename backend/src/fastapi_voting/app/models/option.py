@@ -10,7 +10,6 @@ class Option(Base):
     __tablename__ = 'options'
 
     # --- Инициализация полей ---
-    id: Mapped[int] = mapped_column(primary_key=True)
     option: Mapped[str] = mapped_column(String(255))
 
     # --- Внешние ключи таблицы ---

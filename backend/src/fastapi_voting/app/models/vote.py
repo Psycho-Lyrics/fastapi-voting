@@ -13,7 +13,6 @@ class Vote(Base):
     __tablename__ = 'votes'
 
     # --- Колонки таблицы ---
-    id: Mapped[int] = mapped_column(primary_key=True)
     voted_at: Mapped[timezone] = mapped_column(TIMESTAMP(timezone=True), default=datetime.now(timezone.utc))
 
     # --- Внешние ключи ---

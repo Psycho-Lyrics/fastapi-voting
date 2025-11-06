@@ -21,6 +21,9 @@ class Settings(BaseSettings):
     APP_HOST: str
     APP_PORT: int
 
+    # --- Конфигурация пагинации ---
+    PER_PAGE: int
+
     # --- ACCESS и REFRESH ---
     JWT_SECRET_KEY: str
     JWT_ACCESS_EXPIRE_MINUTES: int

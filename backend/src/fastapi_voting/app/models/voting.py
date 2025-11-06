@@ -31,9 +31,6 @@ class Voting(Base):
     voting_start: Mapped[timezone] = mapped_column(TIMESTAMP(timezone=True))
     voting_end: Mapped[timezone] = mapped_column(TIMESTAMP(timezone=True))
 
-    created_at: Mapped[timezone] = mapped_column(TIMESTAMP(timezone=True), default=datetime.now(timezone.utc))
-    updated_at: Mapped[timezone] = mapped_column(TIMESTAMP(timezone=True), default=datetime.now(timezone.utc), onupdate=datetime.now(timezone.utc))
-
     archived: Mapped[bool] = mapped_column(nullable=True)
     archive_after: Mapped[timezone | None] = mapped_column(TIMESTAMP(timezone=True))
 

@@ -19,14 +19,9 @@ class Department(Base):
     __tablename__ = "departments"
 
     # --- Колонки таблицы ---
-    id: Mapped[int] = mapped_column(primary_key=True)
-
     name: Mapped[str] = mapped_column(String(255), unique=True)
     description: Mapped[str] = mapped_column(String(255))
     location: Mapped[str] = mapped_column(String(255))
-
-    created_at: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True), default=datetime.now(timezone.utc))
-    updated_at: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True), default=datetime.now(timezone.utc), onupdate=datetime.now(timezone.utc))
 
     # --- Внешние ключи ---
     parent_id: Mapped[int | None] = mapped_column(ForeignKey("departments.id", ondelete="SET NULL"))
@@ -35,7 +30,7 @@ class Department(Base):
     # --- ОРМ-связи ---
     head_of_department: Mapped['User'] = relationship(back_populates="manage_department", foreign_keys=[head_of_department_id])
 
-    parent: Mapped['Department'] = relationship(remote_side=[id], back_populates="children")
+    parent: Mapped['Department'] = relationship(remote_side="Department.id", back_populates="children")
 
     children: Mapped[List['Department']] = relationship(back_populates="parent")
 

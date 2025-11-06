@@ -12,8 +12,6 @@ class Question(Base):
     __tablename__ = 'questions'
 
     # --- Инициализация полей ---
-    id: Mapped[int] = mapped_column(primary_key=True)
-
     type: Mapped[QuestionTypeEnum] =  mapped_column(Enum(QuestionTypeEnum), default=QuestionTypeEnum.SINGLE)
     title: Mapped[str] = mapped_column(String(255))
 

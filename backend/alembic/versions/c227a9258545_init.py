@@ -42,12 +42,12 @@ def upgrade() -> None:
     sa.Column('name', sa.String(length=255), nullable=False),
     sa.Column('description', sa.String(length=255), nullable=False),
     sa.Column('location', sa.String(length=255), nullable=False),
-    sa.Column('created_at', sa.TIMESTAMP(timezone=True), nullable=False),
-    sa.Column('updated_at', sa.TIMESTAMP(timezone=True), nullable=False),
     sa.Column('parent_id', sa.Integer(), nullable=True),
     sa.Column('head_of_department_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['head_of_department_id'], ['users.id'], ondelete='SET NULL'),
     sa.ForeignKeyConstraint(['parent_id'], ['departments.id'], ondelete='SET NULL'),
+    sa.Column('created_at', sa.TIMESTAMP(timezone=True), nullable=False),
+    sa.Column('updated_at', sa.TIMESTAMP(timezone=True), nullable=False),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('head_of_department_id'),
     sa.UniqueConstraint('name')
@@ -62,13 +62,13 @@ def upgrade() -> None:
     sa.Column('registration_end', sa.TIMESTAMP(timezone=True), nullable=False),
     sa.Column('voting_start', sa.TIMESTAMP(timezone=True), nullable=False),
     sa.Column('voting_end', sa.TIMESTAMP(timezone=True), nullable=False),
-    sa.Column('created_at', sa.TIMESTAMP(timezone=True), nullable=False),
-    sa.Column('updated_at', sa.TIMESTAMP(timezone=True), nullable=False),
     sa.Column('archived', sa.Boolean(), nullable=True),
     sa.Column('archive_after', sa.TIMESTAMP(timezone=True), nullable=True),
     sa.Column('deleted', sa.Boolean(), nullable=False),
     sa.Column('creator_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['creator_id'], ['users.id'], ondelete='SET NULL'),
+    sa.Column('created_at', sa.TIMESTAMP(timezone=True), nullable=False),
+    sa.Column('updated_at', sa.TIMESTAMP(timezone=True), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('users_department_association',
@@ -90,6 +90,8 @@ def upgrade() -> None:
     sa.Column('voted_at', sa.TIMESTAMP(timezone=True), nullable=False),
     sa.ForeignKeyConstraint(['author_id'], ['users.id'], ondelete='SET NULL'),
     sa.ForeignKeyConstraint(['voting_id'], ['votings.id'], ondelete='CASCADE'),
+    sa.Column('created_at', sa.TIMESTAMP(timezone=True), nullable=False),
+    sa.Column('updated_at', sa.TIMESTAMP(timezone=True), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('voting_department_association',

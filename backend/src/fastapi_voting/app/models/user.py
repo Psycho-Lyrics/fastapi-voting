@@ -22,8 +22,6 @@ class User(Base):
     __tablename__ = "users"
 
     # --- Столбцы таблицы ---
-    id: Mapped[int] = mapped_column(primary_key=True)
-
     first_name: Mapped[str] = mapped_column(String(255))
     last_name: Mapped[str] = mapped_column(String(255))
     surname: Mapped[str | None] = mapped_column(String(255))

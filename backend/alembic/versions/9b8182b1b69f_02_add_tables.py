@@ -27,6 +27,8 @@ def upgrade() -> None:
     sa.Column('title', sa.String(length=255), nullable=False),
     sa.Column('voting_id', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['voting_id'], ['votings.id'], ondelete='CASCADE'),
+    sa.Column('created_at', sa.TIMESTAMP(timezone=True), nullable=False),
+    sa.Column('updated_at', sa.TIMESTAMP(timezone=True), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('options',
@@ -36,6 +38,8 @@ def upgrade() -> None:
     sa.Column('voting_id', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['question_id'], ['questions.id'], ondelete='CASCADE'),
     sa.ForeignKeyConstraint(['voting_id'], ['votings.id'], ),
+    sa.Column('created_at', sa.TIMESTAMP(timezone=True), nullable=False),
+    sa.Column('updated_at', sa.TIMESTAMP(timezone=True), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
     op.add_column('votes', sa.Column('question_id', sa.Integer(), nullable=False))
