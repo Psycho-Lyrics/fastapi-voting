@@ -1,41 +1,4 @@
-import axios from "axios";
-
-const API_URL = import.meta.env.VITE_API_URL;
-
-// Экземпляр Axios с базовым URL
-const api = axios.create({
-    baseURL: API_URL,
-    withCredentials: true,
-    headers: { "Content-Type": "application/json" }
-});
-
-// TODO: реализовать редирект на рефреш при ошибке 401 (при авторизации так же выдает ошибку 401)
-
-api.interceptors.request.use((config) => {
-    const csrf = localStorage.getItem("x-csrf-token");
-    const accessToken = localStorage.getItem("access_token");
-// TODO: csrf-token отправлять только рефреш и logout refresh
-    if (csrf && accessToken) {
-        config.headers["X-CSRF-Token"] = csrf;
-        config.headers['Authorization'] = `Bearer ${accessToken}`
-    }
-
-    return config;
-});
-
-export const register = async (formData) => {
-    const response = await api.post(`/user/register`, formData, {
-    });
-    return response.data;
-};
-
-export const loginUser = async (email, password, remember_me) => {
-    return await api.post(`/user/login`, {
-        email,
-        password,
-        remember_me,
-    });
-};
+import api from './axiosInstance'
 
 export const getProfileData = async () => {
     const response = await api.get(`/users/profile`, {
@@ -57,26 +20,6 @@ export const changePassword = async (passwords) => {
     return response.data;
 };
 
-export const getVotings = async (page = 1, find = '', status = '') => {
-    const params = {
-        page: page,
-        find: find,
-    }
-
-    if (status !== '') {
-        params.status = status
-    }
-
-    const response = await api.get(`/voting/all`, {
-        params
-    });
-    return response.data;
-};
-
-export const createVoting = async (votingData) => {
-    const response = await api.post(`/voting/create`, votingData);
-    return response.data;
-};
 
 export const getVotingData = async (votingId) => {
     const response = await api.get(`/votings/${votingId}`);
@@ -184,8 +127,3 @@ export const getTemplates = async (page = 1, find = '', status = '') => {
     const response = await api.get(`/templates/`);
     return response.data;
 };
-
-export const getDepartmentsTest = async () => {
-    const response = await api.get(`/departments/`);
-    return response.data;
-}

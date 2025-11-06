@@ -4,11 +4,12 @@ import InputField from '/src/components/constructor/CreateVoting/InputField';
 import DateTimePicker from '/src/components/constructor/CreateVoting/DateTimePicker';
 import QuestionForm from '/src/components/constructor/CreateVoting/QuestionForm';
 import AddQuestionButton from '/src/components/constructor/CreateVoting/AddQuestionButton';
-import {createVoting, getDepartments, saveTemplate} from '../../services/api'
+import {getDepartments, saveTemplate} from '../../services/api'
 import {toast, ToastContainer} from 'react-toastify';
 import {CiViewList} from "react-icons/ci";
 import {MdOutlineRocketLaunch} from "react-icons/md";
 import {useDepartments} from "../../hooks/useDepartments.js";
+import {createVoting} from "../../services/api/voting.js";
 
 
 const CreateVoting = ({selectedTemplate}) => {

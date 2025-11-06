@@ -6,6 +6,7 @@ import {NavLink, useNavigate, Link} from 'react-router-dom'
 import {MdLogout} from "react-icons/md";
 import HeaderDropdown from './Header/HeaderDropdown';
 import AltHeaderDropdown from './Header/AltHeaderDropdown';
+import {accessLogout, refreshLogout} from "../services/api/user.js";
 
 const Header = () => {
     const [user, setUser] = useState({});
@@ -30,8 +31,10 @@ const Header = () => {
 
 
     const logoutProfile = async () => {
-        // await logout()
-        // await logoutRefresh()
+        const csrf = localStorage.getItem("x-csrf-token");
+        await accessLogout()
+        await refreshLogout(csrf)
+
         localStorage.clear();
         navigate('/login');
     }
@@ -39,8 +42,6 @@ const Header = () => {
     // if (!user) {
     //     return <header className="w-full h-24 bg-neutral-800 "></header>;
     // }
-
-    console.log(localStorage.getItem('role'))
 
     return (
         <div className='h-25 bg-[#212121]'>

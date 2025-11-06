@@ -7,6 +7,7 @@ import { toast } from 'react-toastify';
 import { TbTimezone } from "react-icons/tb";
 import { LuCalendar1, LuAlarmClock, LuTrash2 } from "react-icons/lu";
 import { IoMdStats } from "react-icons/io";
+import {deleteVoting} from "../../services/api/voting.js";
 
 const VotingCard = ({ voting }) => {
     const status = getVotingStatusConfig(voting);
@@ -21,7 +22,7 @@ const VotingCard = ({ voting }) => {
 
     const handleDelete = async () => {
         try {
-            await deleteVote(voting.id);
+            await deleteVoting(voting.id);
             toast.success("Голосование успешно удалено!");
             handleCloseModal();
         } catch (error) {

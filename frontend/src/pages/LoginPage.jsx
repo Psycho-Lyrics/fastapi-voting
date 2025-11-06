@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {Link, useNavigate} from 'react-router-dom';
 import {toast, ToastContainer} from 'react-toastify';
-import {loginUser} from '../services/api'
+import {loginUser} from '../services/api/user.js'
 import {InputDefault} from "../components/Inputs.jsx";
 
 const LoginPage = () => {
