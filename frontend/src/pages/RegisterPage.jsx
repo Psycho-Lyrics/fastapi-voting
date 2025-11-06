@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import HeaderLogin from "/src/components/HeaderLogin";
 import {Link, useNavigate} from 'react-router-dom';
-import {register} from '../services/api'
+import {register} from '../services/api/user.js'
 import {toast, ToastContainer} from "react-toastify";
 import {InputDefault} from "../components/Inputs.jsx";
 

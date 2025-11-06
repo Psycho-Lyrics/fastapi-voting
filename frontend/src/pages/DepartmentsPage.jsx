@@ -2,24 +2,17 @@ import DepartmentList from "../components/DepartmentList.jsx";
 import {useEffect, useState} from "react";
 import PageTitle from "../components/PageTitle.jsx";
 import Breadcrumbs from "../components/Breadcrumbs.jsx";
+import {getAllDepartments} from "../services/api/department.js";
 
 const DepartmentPage = () => {
     const [departments, setDepartments] = useState([]);
     useEffect(() => {
-        fetch('http://127.0.0.1:5000/api/v1/department/departments/')
-            .then((res) => {
-                if (!res.ok) {
-                    throw new Error(`Ошибка HTTP: ${res.status}`)
-                }
-                return res.json()
-            })
-            .then((data) => {
-                setDepartments(data)
-                console.log("Ответ сервера:", data)
-            })
-            .catch((err) => {
-                console.error("Ошибка запроса:", err)
-            })
+        const getDepartments = async () => {
+            const response = await getAllDepartments();
+            console.log(response);
+            setDepartments(response.data);
+        }
+        getDepartments();
     }, [])
 
     return (

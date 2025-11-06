@@ -7,10 +7,10 @@ import PaginationControls from "../components/votes/PaginationControls";
 import SearchInput from "../components/votes/SearchInput";
 import VotingCard from "../components/votes/VotingCard";
 import Button from "../components/Button";
-import {getVotings} from '../services/api';
 import {formatDate, formatTime, getVotingStatusConfig} from '../components/votes/Formatters';
 import {TbFilterEdit, TbSortDescending} from "react-icons/tb";
 import {ToastContainer} from "react-toastify";
+import {getAllVoting} from "../services/api/voting.js";
 
 
 const VotesPage = () => {
@@ -60,9 +60,9 @@ const VotesPage = () => {
                 const status = activeTab === 'archived' ? 'archived' : '';
 
                 // Запрос на получение всех голосований
-                const responseData = await getVotings(currentPage, searchQuery, status);
-                console.log("Response Data:", responseData);
-                const {items, pagination} = responseData;
+                const response = await getAllVoting(currentPage, searchQuery, status);
+                console.log("Response Data:", response.data);
+                const {items, pagination} = response.data;
 
                 const formattedVotings = items.map((voting) => ({
                     ...voting,
@@ -88,7 +88,7 @@ const VotesPage = () => {
                 }));
 
                 setVotings(formattedVotings);
-                setTotalPages(pagination.total_pages);
+                setTotalPages(pagination.total_count);
                 setHasNext(pagination.has_next);
                 setHasPrev(pagination.has_prev);
             } catch (e) {
