@@ -16,7 +16,7 @@ class AppException(HTTPException):
         super().__init__(detail=detail, status_code=status_code, headers=headers)
 
 
-# --- Пользовательские зависимости ---
+# --- Исключения для пользователей ---
 class UserNotFound(AppException):
     def __init__(self):
         super().__init__(detail="Incorrect data", status_code=status.HTTP_422_UNPROCESSABLE_ENTITY)
@@ -30,3 +30,9 @@ class UserAlreadyExist(AppException):
 class InvalidLogin(AppException):
     def __init__(self):
         super().__init__(detail="Incorrect data", status_code=status.HTTP_422_UNPROCESSABLE_ENTITY)
+
+
+# --- Исключения для голосований ---
+class VotingNotFound(AppException):
+    def __init__(self):
+        super().__init__(detail="Voting not found", status_code=status.HTTP_404_NOT_FOUND)

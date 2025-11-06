@@ -11,6 +11,8 @@ from src.fastapi_voting.app.models import Voting
 
 from src.fastapi_voting.app.schemas.voting_schema import ResponseAllVotingsSchema
 
+from src.fastapi_voting.app.core.exception import VotingNotFound
+
 
 # --- Инструментарий ---
 logger = logging.getLogger("fastapi-voting")
@@ -36,7 +38,7 @@ class VotingService:
         # --- Проверка на существование записи ---
         voting = await self.voting_repo.get_by_id(voting_id)
         if (voting is None) or (voting.deleted):
-            raise HTTPException(status_code=404, detail="Голосования не существует")
+            raise VotingNotFound()
 
         # --- Работа репозитория ----
         await self.voting_repo.delete(voting)
