@@ -39,3 +39,8 @@ class InputCreateVotingSchema(BaseModel):
 class InputDeleteVotingSchema(BaseModel):
     id: int
 
+
+# --- Схема для отображения всех голосований ---
+class ResponseAllVotingsSchema(BaseModel):
+    items: list[VotingSchema]
+    pagination: dict[str, bool | int]
