@@ -1,9 +1,19 @@
+import logging
+
+from src.fastapi_voting.app.core.settings import get_settings
+
 from sqlalchemy import select, String, TEXT, cast, or_
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
 
+# --- Инструментарий ---
+logger = logging.getLogger("fastapi-voting")
+settings = get_settings()
+
+# --- Репозиторий ---
 class Base:
+
     def __init__(self, model, session: AsyncSession):
         self.session = session
         self.model = model
@@ -39,19 +49,28 @@ class Base:
         return result.scalars().first()
 
 
-    async def paginate(self, query):
-        # TODO: Реализовать алгоритм пагинации
-        pass
+    def paginate(self, query, page: int):
 
-    async def search_all(self, model, query, find):
-        """Выборка значений по заданному условию поиска"""
+        # --- Первичные данные ---
+        offset = (page - 1) * settings.PER_PAGE
+        limit = settings.PER_PAGE + 1
+
+        # --- Формирование запроса ---
+        query = query.order_by(self.model.registration_start.desc()).offset(offset).limit(limit)
+
+        # --- Возврат продекорированного запроса ---
+        return query
+
+
+    def search_all(self, query, find):
+        """Выборка значений из всех полей по заданному условию поиска"""
 
         # --- Вспомогательные значение ---
         search_pattern = f"%{find}%"
         search_condition = list()
 
         # --- Процесс формирование запроса ---
-        for column in model.__table__.columns:
+        for column in self.model.__table__.columns:
             if isinstance(column.type, (TEXT, String)):
                 search_condition.append(column.ilike(search_pattern))
             else:
