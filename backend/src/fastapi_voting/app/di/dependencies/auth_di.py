@@ -1,13 +1,14 @@
-import logging
-
 from redis.asyncio import Redis
 
 from fastapi import Request, HTTPException, status, Depends
 
 from fastapi_csrf_protect import CsrfProtect
+from fastapi_csrf_protect.exceptions import TokenValidationError
 
 from jose import jwt
 from jose.exceptions import ExpiredSignatureError, JWTError
+
+from src.fastapi_voting.app.core.exception import TokenExpired, TokenInvalid, TokenIsRevoked, InvalidCSRF
 
 from src.fastapi_voting.app.core.settings import get_settings
 
@@ -17,7 +18,6 @@ from src.fastapi_voting.app.di.dependencies.databases_di import get_redis
 
 # --- Инструментарий ---
 settings = get_settings()
-logger = logging.getLogger("fastapi-voting")
 
 # --- Зависимости ---
 class AuthTokenRequired:
@@ -54,16 +54,12 @@ class AuthTokenRequired:
             request: Request,
             redis_client: Redis = Depends(get_redis)
     ):
-        # --- Извлечение токена из входных данных ---
+        # --- Работа со входными данными ---
         token = self.extract_token(request)
 
         # --- Проверка на наличие токена во входных данных ---
         if token is None:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail=f"invalid token",
-                headers={"WWW-Authenticate": "Bearer realm=\"api\", error=\"token_required\"",}
-            )
+            raise TokenInvalid(request)
 
         # --- Валидация токена и извлечение payload-данных ---
         try:
@@ -73,36 +69,30 @@ class AuthTokenRequired:
                 algorithms=["HS256"]
             )
         except ExpiredSignatureError:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail=f"invalid token",
-                headers={"WWW-Authenticate": "Bearer realm=\"api\", error=\"token_expired\""},
-            )
+            raise TokenExpired(request)
 
         except JWTError:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail=f"invalid token",
-                headers={"WWW-Authenticate": "Bearer realm=\"api\", error=\"token_invalid\""},
-            )
+            raise TokenInvalid(request)
 
         # --- Проверка отозванных токенов ---
         token_is_revoked = await redis_client.exists(f"jwt-block:{payload['jti']}")
 
         if token_is_revoked:
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail=f"invalid token",
-            )
+            raise TokenIsRevoked(request)
 
         # --- Ответ ---
         return payload
 
 
 async def csrf_valid(request: Request, csrf_protect: CsrfProtect = Depends()):
-    await csrf_protect.validate_csrf(
-        request=request,
-        cookie_key="fastapi-csrf-token",
-        secret_key=settings.CSRF_SECRET_KEY,
-    )
+
+    try:
+        await csrf_protect.validate_csrf(
+            request=request,
+            cookie_key="fastapi-csrf-token",
+            secret_key=settings.CSRF_SECRET_KEY,
+        )
+    except TokenValidationError:
+        raise InvalidCSRF(request)
+
     return True
