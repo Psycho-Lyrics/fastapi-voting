@@ -24,7 +24,27 @@ class AppException(HTTPException):
 
 # --- Базовый класс исключений для токенов ---
 class TokenException(AppException):
+
+    log_msg_locale = {
+        "Invalid token": "Некорректный токен",
+        "Token expired": "Токен просрочен",
+        "Token revoked": "Токен был отозван",
+        "Invalid CSRF-token": "Некорректный CSRF-токен"
+    }
+
     def __init__(self, request: Request, detail: str, status_code: int, www_error: str | None = None):
+
+        # Определение сообщения для логов
+        log_msg = self.get_log_msg(request, self.log_msg_locale[detail])
+
+        # Логирование исключения
+        logger.warning(log_msg)
+
+        # Возбуждение исключения
+        super().__init__(detail, status_code, www_error)
+
+
+    def get_log_msg(self, request: Request, msg: str):
 
         # Данные для логирования
         url = request.url.path
@@ -35,31 +55,11 @@ class TokenException(AppException):
         origin = request.headers.get("Origin")
         host = request.headers.get("Host")
 
-        get_log_string = lambda msg: f"{request_method} {url} - {msg}. Origin: {origin}, User-Agent: {user_agent}, Host: {host}, Referer: {referer}"
-
-        # Определение сообщения для логов
-        match detail:
-            case "Invalid token":
-                log_msg = get_log_string("Некорректный токен")
-
-            case "Token expired":
-                log_msg = get_log_string("Токен просрочен")
-
-            case "Token revoked":
-                log_msg = get_log_string("Токен был отозван")
-
-            case "Invalid CSRF-token":
-                log_msg = get_log_string("Некорректный CSRF-токен")
-
-        # Логирование исключения
-        logger.warning(log_msg)
-
-        # Возбуждение исключения
-        super().__init__(detail, status_code, www_error)
+        result = f"{request_method} {url} - {msg}. Origin: {origin}, User-Agent: {user_agent}, Host: {host}, Referer: {referer}"
+        return result
 
 
 # --- Исключения для токенов ---
-
 class TokenInvalid(TokenException):
     def __init__(self, request: Request):
         super().__init__(request, detail="Invalid token", status_code=status.HTTP_401_UNAUTHORIZED, www_error="token_invalid")
