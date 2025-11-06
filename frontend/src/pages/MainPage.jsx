@@ -6,7 +6,7 @@ import Calendar from "../components/main/Calendar";
 import { ActualVoteCard, MinInfoVoteCard } from "../components/main/VoteCard";
 import { LinkText } from "../components/main/Components";
 import { Chart2 } from "../components/main/Charts";
-import { getProfileData, getVotingData, userInfo } from "../services/api";
+import { getProfileData, getVotingData } from "../services/api";
 import { toast } from "react-toastify";
 import {
   formatDate,

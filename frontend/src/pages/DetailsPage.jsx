@@ -12,7 +12,6 @@ import {
     getVotingParticipants,
     getVotingStats,
     registerUserForVoting,
-    userInfo
 } from '../services/api.js';
 import {formatDate, formatTime, getVotingStatusConfigDetails} from '../components/votes/Formatters.jsx';
 import {ToastContainer, toast} from 'react-toastify';
@@ -62,9 +61,9 @@ const Details = () => {
     // запрос на получение role_id и user_id
     useEffect(() => {
         const fetchUser = async () => {
-            const user = await userInfo();
-            setUserId(user.user_id);
-            setRoleId(user.role_id);
+
+            setUserId(20);
+            setRoleId(3);
         };
         fetchUser();
     }, []);

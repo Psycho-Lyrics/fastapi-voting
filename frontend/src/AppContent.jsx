@@ -16,7 +16,7 @@ function AppContent() {
 
   return (
     <>
-      {location.pathname === '/login' || location.pathname === '/register' ? <HeaderLogin /> : <Header /> }
+      {location.pathname !== '/login' && location.pathname !== '/register' && <Header /> }
       <Routes>
         <Route path='/login' element={<LoginPage />} />
         <Route path='/votes' element={<VotesPage />} />
