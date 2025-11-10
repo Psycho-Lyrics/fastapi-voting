@@ -62,3 +62,18 @@ class UserService:
 
         # --- Формирование ответа ---
         return user_by_email
+
+
+    async def change_credentials(self, data: dict, user_id: int) -> User:
+        """Отвечает за смену учётных данных пользователя, исключая пароль."""
+
+        # --- Проверка на существование пользователя ---
+        user_exist: bool = await self.user_repo.exist_by_id(id=user_id)
+        if not user_exist:
+            raise UserNotFound(log_message=f"Пользователь с ID: {user_id} не найден.")
+
+        # --- Работа репозитория ---
+        user = await self.user_repo.change_credentials(data=data, id=user_id)
+
+        # --- Результат ---
+        return user
