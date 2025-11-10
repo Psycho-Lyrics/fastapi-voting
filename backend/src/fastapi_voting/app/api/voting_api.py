@@ -3,7 +3,6 @@ from fastapi import APIRouter, Query, Header
 from src.fastapi_voting.app.di.annotations import (
     VotingServiceAnnotation,
     AccessRequiredAnnotation,
-    CSRFValidAnnotation
 )
 from src.fastapi_voting.app.schemas.voting_schema import (
     VotingSchema,
@@ -25,8 +24,9 @@ async def get_all_votings(
         access_payload: AccessRequiredAnnotation,
         voting_service: VotingServiceAnnotation,
 
-        find: str = Query(default=None, description="Строковое условие поиска"),
-        page: int = Query(default=1, description="Целочисленное значение текущей страницы для пагинации"),
+        find: str = Query(default=None, description="Строковое условие поиска."),
+        archived: bool = Query(default=False, description="Булево условие статуса голосования."),
+        page: int = Query(default=1, description="Целочисленное значение текущей страницы для пагинации."),
 
         access_token: str = Header(default=None, description="JWT-токен"),
 ):
@@ -34,7 +34,7 @@ async def get_all_votings(
     user_id = access_payload["sub"]
 
     # --- Работа сервиса ---
-    response = await voting_service.get_all_votings(user_id, find, page)
+    response = await voting_service.get_all_votings(user_id=user_id, page=page, find=find, archived=archived)
 
     # --- Ответ ---
     return response

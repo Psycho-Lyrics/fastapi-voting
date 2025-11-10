@@ -9,7 +9,7 @@ from src.fastapi_voting.app.models.voting import Voting
 from src.fastapi_voting.app.models.user import User
 
 from src.fastapi_voting.app.repositories.base_repo import Base
-
+from src.fastapi_voting.app.schemas.voting_schema import ResponseAllVotingsSchema
 
 # --- Инструментарий ---
 logger = logging.getLogger("fastapi-voting")
@@ -29,13 +29,14 @@ class VotingRepo(Base):
         await self.session.commit()
 
 
-    async def available_votings(self, user_id: int, find: str | None, page: int):
+    async def available_votings(self, user_id: int, find: str | None, page: int, archived: bool) -> tuple:
         """Возвращает перечень доступных конкретному пользователю голосований"""
 
         # --- Формирование фильтрующего запроса ---
         query = select(Voting).outerjoin(Voting.registered_users).where(
             and_(
                 Voting.deleted == False,
+                Voting.archived == archived,
                 or_(
                     Voting.creator_id == user_id,
                     User.id == user_id,

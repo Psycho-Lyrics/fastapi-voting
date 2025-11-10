@@ -45,10 +45,10 @@ class VotingService:
         return True
 
 
-    async def get_all_votings(self, user_id: int, find: str | None, page: int) -> ResponseAllVotingsSchema:
+    async def get_all_votings(self, user_id: int, find: str | None, page: int, archived: bool) -> ResponseAllVotingsSchema:
 
         # --- Работа репозитория ---
-        votings, total_count = await self.voting_repo.available_votings(user_id, find, page)
+        votings, total_count = await self.voting_repo.available_votings(user_id, find, page, archived)
 
         # --- Формирование ответа сервиса ---
         has_prev: bool = True if page > 1 else False
