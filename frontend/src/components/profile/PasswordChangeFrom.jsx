@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { changePassword } from "../../services/api";
 import { TbCloudDownload } from "react-icons/tb";
+import {InputPassword} from "../Inputs.jsx";
 
 
 const PasswordChangeForm = () => {  
@@ -59,65 +60,39 @@ const PasswordChangeForm = () => {
             <div className="p-4 md:p-[32px] space-y-4 md:space-y-[20px]">
                 <h1 className="text-neutral-800 text-xl md:text-2xl font-semibold">Пароль</h1>
 
-                {/* Пароль */}
-                <div className="flex flex-col gap-2 md:gap-[10px]">
-                    <label
-                        htmlFor="old_password"
-                        className="text-[#CCCCCC] text-sm md:text-base font-normal mb-1 flex items-center gap-1"
-                    >
-                        Пароль
-                        <div className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full border border-stone-300"></div>
-                    </label>
-                    <input
-                        type="password"
-                        id="old_password"
-                        name="old_password"
-                        value={password.old_password}
-                        onChange={handleChange}
-                        placeholder="hiown9823u0n"
-                        className="border border-black rounded-lg w-full h-12 md:h-[51px] px-3 md:px-4 py-2 md:py-3 text-sm md:text-base font-normal text-neutral-800 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    />
-                </div>
+                {/* Старый пароль */}
+                <InputPassword
+                    type="password"
+                    title="Старый пароль"
+                    placeholder="hiown9823u0n"
+                    value={password.old_password}
+                    onChange={handleChange}
+                    name="old_password"
+                />
 
                 {/* Новый пароль */}
-                <div className="flex flex-col gap-2 md:gap-[10px]">
-                    <label
-                        htmlFor="new_password"
-                        className="text-[#CCCCCC] text-sm md:text-base font-normal mb-1 flex items-center gap-1"
-                    >
-                        Новый пароль
-                        <div className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full border border-stone-300"></div>
-                    </label>
-                    <input
-                        type="password"
-                        id="new_password"
-                        name="new_password"
-                        value={password.new_password}
-                        onChange={handleChange}
-                        placeholder="******************"
-                        className="border border-black rounded-lg w-full h-12 md:h-[51px] px-3 md:px-4 py-2 md:py-3 text-sm md:text-base font-normal text-neutral-800 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    />
-                </div>
+                <InputPassword
+                    type="password"
+                    title="Новый пароль"
+                    placeholder="******"
+                    required
+                    validate={(val) => val.length >= 1}
+                    value={password.new_password}
+                    onChange={handleChange}
+                    name="new_password"
+                />
 
                 {/* Подтвердить новый пароль */}
-                <div className="flex flex-col gap-2 md:gap-[10px]">
-                    <label
-                        htmlFor="confirm_new_password"
-                        className="text-[#CCCCCC] text-sm md:text-base font-normal mb-1 flex items-center gap-1"
-                    >
-                        Подтвердите новый пароль
-                        <div className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full border border-stone-300"></div>
-                    </label>
-                    <input
-                        type="password"
-                        id="confirm_new_password"
-                        name="confirm_new_password"
-                        value={password.confirm_new_password}
-                        onChange={handleChange}
-                        placeholder="******************"
-                        className="border border-black rounded-lg w-full h-12 md:h-[51px] px-3 md:px-4 py-2 md:py-3 text-sm md:text-base font-normal text-neutral-800 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                    />
-                </div>
+                <InputPassword
+                    type="password"
+                    title="Подтвердите новый пароль"
+                    placeholder="******"
+                    required
+                    validate={(val) => val.length >= 1 && val === password.new_password}
+                    value={password.confirm_new_password}
+                    onChange={handleChange}
+                    name="confirm_new_password"
+                />
 
                 <button
                     type="submit"

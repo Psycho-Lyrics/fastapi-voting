@@ -3,7 +3,7 @@ import HeaderLogin from "/src/components/HeaderLogin";
 import {Link, useNavigate} from 'react-router-dom';
 import {register} from '../services/api/user.js'
 import {toast, ToastContainer} from "react-toastify";
-import {InputDefault} from "../components/Inputs.jsx";
+import {InputDefault, InputPassword} from "../components/Inputs.jsx";
 
 const RegisterPage = () => {
     const [formData, setFormData] = useState({
@@ -156,7 +156,7 @@ const RegisterPage = () => {
                                 className={'h-[51px]'}
                             />
 
-                            <InputDefault
+                            <InputPassword
                                 type="password"
                                 title="Пароль"
                                 placeholder="******"
@@ -167,7 +167,7 @@ const RegisterPage = () => {
                                 name="password"
                             />
 
-                            <InputDefault
+                            <InputPassword
                                 type="password"
                                 title="Подтвердите пароль"
                                 placeholder="******"
@@ -309,7 +309,7 @@ const RegisterPage = () => {
                                 className={'h-[51px]'}
                             />
 
-                            <InputDefault
+                            <InputPassword
                                 type="password"
                                 title="Пароль"
                                 placeholder="******"
@@ -320,7 +320,7 @@ const RegisterPage = () => {
                                 name="password"
                             />
 
-                            <InputDefault
+                            <InputPassword
                                 type="password"
                                 title="Подтвердите пароль"
                                 placeholder="******"
