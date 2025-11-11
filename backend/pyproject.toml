@@ -31,6 +31,7 @@ faker = "^37.8.0"
 cryptography = "^46.0.2"
 fastapi-csrf-protect = "^1.0.7"
 redis = "^7.0.1"
+aiosmtplib = "^5.0.0"
 
 [tool.poetry.scripts]
 db="src.fastapi_voting.app.poetry_cli.main.db:db"
