@@ -5,7 +5,6 @@ import DateTimePicker from '/src/components/constructor/CreateVoting/DateTimePic
 import QuestionForm from '/src/components/constructor/CreateVoting/QuestionForm';
 import AddQuestionButton from '/src/components/constructor/CreateVoting/AddQuestionButton';
 import {getDepartments, saveTemplate} from '../../services/api'
-import {toast, ToastContainer} from 'react-toastify';
 import {CiViewList} from "react-icons/ci";
 import {MdOutlineRocketLaunch} from "react-icons/md";
 import {useDepartments} from "../../hooks/useDepartments.js";
@@ -160,13 +159,13 @@ const CreateVoting = ({selectedTemplate}) => {
     // Создание голосования
     const sendToServer = async () => {
         await createVoting(data);
-        toast.success("Голосование успешно создано");
+        console.log("Голосование успешно создано");
     };
 
     // Отправка шаблона
     const sendTemplateToServer = async () => {
         await saveTemplate(data)
-        toast.success('Шаблон сохранен');
+        console.log('Шаблон сохранен');
     };
 
 

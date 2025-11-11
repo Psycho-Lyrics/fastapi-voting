@@ -3,6 +3,7 @@ import { getProfileData, updateProfileData } from '/src/services/api.js'
 import { TbCloudDownload } from "react-icons/tb";
 import {InputDefault} from "../Inputs.jsx";
 import {changeCredentials} from "../../services/api/user.js";
+import toast from 'react-hot-toast';
 
 
 const PersonalData = () => {
@@ -53,9 +54,11 @@ const PersonalData = () => {
             localStorage.setItem('surname', response.data.surname);
             localStorage.setItem('email', response.data.email);
             console.log('Данные успешно сохранены!');
+            toast.success('Данные успешно сохранены!');
             
         } catch (error) {
             console.error('Ошибка при сохранении данных:', error.message);
+            toast.error("Не удалось сохранить данные.")
             
         } finally {
             setIsSaving(false);

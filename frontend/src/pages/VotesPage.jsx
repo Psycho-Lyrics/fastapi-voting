@@ -9,7 +9,6 @@ import VotingCard from "../components/votes/VotingCard";
 import Button from "../components/Button";
 import {formatDate, formatTime, getVotingStatusConfig} from '../components/votes/Formatters';
 import {TbFilterEdit, TbSortDescending} from "react-icons/tb";
-import {ToastContainer} from "react-toastify";
 import {getAllVoting} from "../services/api/voting.js";
 
 
@@ -103,7 +102,6 @@ const VotesPage = () => {
 
     return (
         <>
-            <ToastContainer/>
             <div className="min-h-screen">
                 <div className="mx-4 2xl:ml-[240px] mt-[60px] 2xl:mr-[240px] lg:ml-[40px] lg:mr-[40px]">
                     <Breadcrumbs title="Главная / Голосования"/>

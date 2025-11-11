@@ -1,6 +1,5 @@
 import {useState, useEffect} from 'react';
 import {getDepartments} from '../services/api';
-import {toast} from 'react-toastify';
 
 export const useDepartments = () => {
     const [departments, setDepartments] = useState([]);
@@ -26,7 +25,7 @@ export const useDepartments = () => {
             const unique = Array.from(new Map(all.map(d => [d.id, d])).values());
             setDepartments(unique);
         } catch (error) {
-            toast.error('Ошибка загрузки департаментов');
+            console.log(error);
         } finally {
             setIsLoadingDepartments(false);
         }

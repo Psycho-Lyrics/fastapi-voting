@@ -2,7 +2,6 @@ import React, {useState} from 'react';
 import HeaderLogin from "/src/components/HeaderLogin";
 import {Link, useNavigate} from 'react-router-dom';
 import {register} from '../services/api/user.js'
-import {toast, ToastContainer} from "react-toastify";
 import {InputDefault, InputPassword} from "../components/Inputs.jsx";
 
 const RegisterPage = () => {
@@ -70,7 +69,6 @@ const RegisterPage = () => {
 
     return (
         <>
-            <ToastContainer/>
             <div className="flex flex-col items-center  justify-center min-h-[calc(100vh-100px)] bg-gray-100">
                 <h1 className="text-[40px] mb-6 w-[264px] h-[48px] font-mak">Регистрация</h1>
 

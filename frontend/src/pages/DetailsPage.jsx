@@ -14,7 +14,6 @@ import {
     registerUserForVoting,
 } from '../services/api.js';
 import {formatDate, formatTime, getVotingStatusConfigDetails} from '../components/votes/Formatters.jsx';
-import {ToastContainer, toast} from 'react-toastify';
 import MyBulliten from '../components/details/MyBulliten.jsx';
 import {CiCircleInfo} from "react-icons/ci";
 import {IoMdStats} from "react-icons/io"; //stats
@@ -83,25 +82,8 @@ const Details = () => {
             await registerUserForVoting(votingId);
             setIsRegistered(true);
             setActiveContent('my-bulletin');
-            toast.success('Пользователь успешно зарегистрирован!');
         } catch (error) {
-            if (error.response) {
-                switch (error.response.status) {
-                    case 400:
-                        toast.error(`Ошибка 400: ${error.response.data.error}`);
-                        break;
-                    case 404:
-                        toast.error(`Ошибка 404: Голосование или пользователь не найден`);
-                        break;
-                    case 409:
-                        toast.error(`Ошибка 409: Пользователь зарегистрирован или регистрация закрыта`);
-                        break;
-                    default:
-                        toast.error('Произошла ошибка.');
-                }
-            } else {
-                toast.error('Сетевая ошибка. Проверьте ваше подключение.');
-            }
+            console.log(error)
         }
     };
 
@@ -137,7 +119,6 @@ const Details = () => {
             } catch (e) {
                 console.error("Ошибка при получении данных:", e);
                 // Можно добавить тост, чтобы показать ошибку пользователю
-                toast.error('Не удалось загрузить данные о голосовании.');
             } finally {
                 setLoading(false);
             }
@@ -253,7 +234,6 @@ const Details = () => {
 
     return (
         <div className="min-h-screen">
-            <ToastContainer/>
             <div className="2xl:mx-[240px] mt-[60px]">
                 <Breadcrumbs title='Администратор / Детали голосования / Общая информация'/>
                 <div className="flex items-center justify-between">
