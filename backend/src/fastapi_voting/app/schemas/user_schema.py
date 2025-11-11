@@ -52,3 +52,11 @@ class InputChangeCredentialsSchema(BaseModel):
     last_name: str
     surname: str | None
     email: str
+
+
+# --- Схемы для замены пароля пользователя ---
+class InputChangePasswordSchema(BaseModel):
+    old_password: str
+    new_password: str
+
+
