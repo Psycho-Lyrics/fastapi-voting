@@ -1,14 +1,29 @@
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import { getProfileData, updateProfileData } from '/src/services/api.js'
 import { TbCloudDownload } from "react-icons/tb";
 import {InputDefault} from "../Inputs.jsx";
+import {changeCredentials} from "../../services/api/user.js";
 
 
-const PersonalData = ({formData, setFormData}) => {
+const PersonalData = () => {
+    const [formData, setFormData] = useState({
+        last_name: '',
+        first_name: '',
+        surname: '',
+        email: '',
+    });
 
     const [isSaving, setIsSaving] = useState(false);
 
-
+    useEffect(() => {
+        const dataFromStorage = {
+            last_name: localStorage.getItem('last_name') ?? '',
+            first_name: localStorage.getItem('first_name') ?? '',
+            surname: localStorage.getItem('surname') ?? '',
+            email: localStorage.getItem('email') ?? '',
+        };
+        setFormData(prev => ({ ...prev, ...dataFromStorage }));
+    }, []);
 
     // Обработчик изменений в полях формы
     const handleChange = (e) => {
@@ -31,7 +46,12 @@ const PersonalData = ({formData, setFormData}) => {
                 email: formData.email
             };
 
-            await updateProfileData(updatableData);
+            const response = await changeCredentials(updatableData);
+            console.log(response);
+            localStorage.setItem('first_name', response.data.first_name);
+            localStorage.setItem('last_name', response.data.last_name);
+            localStorage.setItem('surname', response.data.surname);
+            localStorage.setItem('email', response.data.email);
             console.log('Данные успешно сохранены!');
             
         } catch (error) {

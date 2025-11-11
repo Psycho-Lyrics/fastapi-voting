@@ -52,6 +52,7 @@ const LoginPage = () => {
             localStorage.setItem('first_name', response.data.user.first_name);
             localStorage.setItem('last_name', response.data.user.last_name);
             localStorage.setItem('surname', response.data.user.surname);
+            localStorage.setItem('email', response.data.user.email);
             setMessage({text: 'Авторизация прошла успешно!', type: 'success' });
 
 

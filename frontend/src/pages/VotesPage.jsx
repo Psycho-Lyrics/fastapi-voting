@@ -57,10 +57,10 @@ const VotesPage = () => {
     useEffect(() => {
         const fetchVotings = async () => {
             try {
-                const status = activeTab === 'archived' ? 'archived' : '';
+                const archived = activeTab === 'archived';
 
                 // Запрос на получение всех голосований
-                const response = await getAllVoting(currentPage, searchQuery, status);
+                const response = await getAllVoting(currentPage, searchQuery, archived);
                 console.log("Response Data:", response.data);
                 const {items, pagination} = response.data;
 
