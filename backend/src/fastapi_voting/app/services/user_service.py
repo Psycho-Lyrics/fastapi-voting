@@ -89,7 +89,7 @@ class UserService:
         return user
 
 
-    async def init_change_password(self, data: dict, user_id: int):
+    async def init_change_password(self, data: dict, user_id: int, client_ip: str):
         """Отвечает за смену пароля пользователя."""
 
         # --- Проверка на существование пользователя ---
@@ -103,11 +103,20 @@ class UserService:
             raise InvalidLogin(log_message=f"Указан неверный пароль <{data['old_password']}> для пользователя с ID <{user_id}>.")
 
         # --- Отправка письма для подтверждения операции ---
-        email_verification_token = self.token_service.create_email_verification_token(user_id)
+        email_verification_token = self.token_service.create_email_verification_token(user_id, client_ip)
 
         await self.email_service.send_change_password_email(
             token=email_verification_token,
             recipients=[user.email])
 
         # --- Формирование отложенной операции ---
-        #await self.background_task_service
+        await self.task_service.add_change_password_task(user_id, data["new_password"])
+
+
+    async def confirm_change_password(self, user_id: int):
+        """Выполняет операцию смены пароля."""
+
+        # --- Выполнение операции смены пароля ---
+        # TODO: Предупредить повторное использование тасков
+        password: str = await self.task_service.execute_change_password_task(user_id)
+        await self.user_repo.change_password(id=user_id, password=password)
