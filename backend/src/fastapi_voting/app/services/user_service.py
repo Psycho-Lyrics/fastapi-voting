@@ -10,15 +10,25 @@ from src.fastapi_voting.app.models.user import User
 
 from src.fastapi_voting.app.core.enums import RolesEnum
 
-from src.fastapi_voting.app.services.background_task_service import BackgroundTaskService
+from src.fastapi_voting.app.services.task_service import TaskService
 from src.fastapi_voting.app.services.email_service import EmailService
+from src.fastapi_voting.app.services.token_service import TokenService
 
 
 class UserService:
-    def __init__(self, user_repo: UserRepo, email_service: EmailService, background_task_service: BackgroundTaskService):
+    def __init__(
+            self,
+            user_repo: UserRepo,
+
+            email_service: EmailService,
+            task_service: TaskService,
+            token_service: TokenService
+    ):
         self.user_repo = user_repo
+
         self.email_service = email_service
-        self.background_task_service = background_task_service
+        self.task_service = task_service
+        self.token_service = token_service
 
 
     async def register(self, data: InputCreateUserSchema) -> User:
@@ -79,7 +89,7 @@ class UserService:
         return user
 
 
-    async def change_password(self, data: dict, user_id: int):
+    async def init_change_password(self, data: dict, user_id: int):
         """Отвечает за смену пароля пользователя."""
 
         # --- Проверка на существование пользователя ---
@@ -90,12 +100,14 @@ class UserService:
         # --- Верификация пароля ---
         pass_is_valid: bool = user.verify_password(password=data["old_password"])
         if not pass_is_valid:
-            raise InvalidLogin(log_message=f"Указан неверный пароль <{data['password']}> для пользователя с ID <{user_id}>.")
+            raise InvalidLogin(log_message=f"Указан неверный пароль <{data['old_password']}> для пользователя с ID <{user_id}>.")
 
         # --- Отправка письма для подтверждения операции ---
-        subject = "Подтверждение смены пароля."
-        message = "#" # TODO: Ожидаю вёрстку шаблона письма
-        await self.email_service.send(subject, message, recipients=[user.email])
+        email_verification_token = self.token_service.create_email_verification_token(user_id)
+
+        await self.email_service.send_change_password_email(
+            token=email_verification_token,
+            recipients=[user.email])
 
         # --- Формирование отложенной операции ---
         #await self.background_task_service
