@@ -7,7 +7,6 @@ import { ActualVoteCard, MinInfoVoteCard } from "../components/main/VoteCard";
 import { LinkText } from "../components/main/Components";
 import { Chart2 } from "../components/main/Charts";
 import { getProfileData, getVotingData } from "../services/api";
-import { toast } from "react-toastify";
 import {
   formatDate,
   formatTime,
@@ -225,7 +224,6 @@ useEffect(() => {
       setVotings(detailedVotings);
     } catch (err) {
       console.error("Ошибка загрузки данных:", err);
-      toast.error("Не удалось загрузить данные. Проверьте сессию.");
     } finally {
       setLoading(false);
     }

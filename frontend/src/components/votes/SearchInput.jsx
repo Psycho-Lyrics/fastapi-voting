@@ -11,7 +11,7 @@ const SearchInput = ({value, onChange, onSearch}) => {
     };
     
     return (
-        <div className="px-3 py-2 sm:px-[20px] sm:py-[16px] rounded-lg border border-[#CCCCCC] flex items-center gap-2 w-full">
+        <div className="px-3 py-2 rounded-lg border border-[#CCCCCC] flex items-center gap-2 w-full hover:ring hover:ring-[#CCCCCC] hover:ring-offset-0 focus-within:ring focus-within:ring-[#CCCCCC] transition-shadow duration-150">
             <CiSearch size={24} />
             <input
                 type="text"

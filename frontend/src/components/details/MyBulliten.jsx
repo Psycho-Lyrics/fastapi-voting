@@ -1,6 +1,5 @@
 import {useState} from 'react'
 import {formatRemainingTime} from "../votes/Formatters";
-import {ToastContainer, toast} from 'react-toastify';
 import {sendVote} from '../../services/api';
 import {RadioGroup, Radio, FormControlLabel, Checkbox, FormGroup, Typography} from '@mui/material';
 import {TbTimezone} from "react-icons/tb";
@@ -48,7 +47,7 @@ const MyBulliten = ({votingData, votingId}) => {
         // POST запрос для отправки ответов
         try {
             const response = await sendVote(votingId, payload)
-            toast.success(response.data.message)
+            console.log(response.data.message)
         } catch (error) {
             console.log(error)
         }
@@ -110,7 +109,6 @@ const MyBulliten = ({votingData, votingId}) => {
 
     return (
         <>
-            <ToastContainer position="top-center"/>
             <div className="flex flex-col gap-[10px]">
                 <div className="flex flex-col gap-[10px]">
                     <div className="h-auto p-8 bg-white rounded-[20px] shadow-lg">

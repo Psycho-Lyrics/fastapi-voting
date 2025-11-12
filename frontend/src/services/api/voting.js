@@ -1,8 +1,8 @@
 import api from '../axiosInstance.js';
 
-export const getAllVoting = (page = 1, find = '', status = '') => {
+export const getAllVoting = (page = 1, find = '', archived) => {
     const params = { page, find };
-    if (status) params.status = status;
+    if (archived) params.archived = archived;
     return api.get('/voting/all', { params });
 };
 

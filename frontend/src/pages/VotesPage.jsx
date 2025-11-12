@@ -9,7 +9,6 @@ import VotingCard from "../components/votes/VotingCard";
 import Button from "../components/Button";
 import {formatDate, formatTime, getVotingStatusConfig} from '../components/votes/Formatters';
 import {TbFilterEdit, TbSortDescending} from "react-icons/tb";
-import {ToastContainer} from "react-toastify";
 import {getAllVoting} from "../services/api/voting.js";
 
 
@@ -57,10 +56,10 @@ const VotesPage = () => {
     useEffect(() => {
         const fetchVotings = async () => {
             try {
-                const status = activeTab === 'archived' ? 'archived' : '';
+                const archived = activeTab === 'archived';
 
                 // Запрос на получение всех голосований
-                const response = await getAllVoting(currentPage, searchQuery, status);
+                const response = await getAllVoting(currentPage, searchQuery, archived);
                 console.log("Response Data:", response.data);
                 const {items, pagination} = response.data;
 
@@ -103,7 +102,6 @@ const VotesPage = () => {
 
     return (
         <>
-            <ToastContainer/>
             <div className="min-h-screen">
                 <div className="mx-4 2xl:ml-[240px] mt-[60px] 2xl:mr-[240px] lg:ml-[40px] lg:mr-[40px]">
                     <Breadcrumbs title="Главная / Голосования"/>
@@ -123,8 +121,7 @@ const VotesPage = () => {
                     </div>
 
                     <div className="mt-4 flex flex-col gap-3">
-                        <div
-                            className="flex flex-col md:flex-row md:justify-between bg-white shadow-lg items-center p-4 md:p-6 rounded-xl md:rounded-[20px] gap-4 lg:flex-nowrap">
+                        <div className="flex flex-col md:flex-row md:justify-between bg-white shadow-lg items-center p-4 md:p-6 rounded-xl md:rounded-[20px] gap-4 lg:flex-nowrap">
                             <div className="flex gap-4 w-full justify-center md:w-auto md:justify-start">
                                 <VotingControls activeTab={activeTab} onTabChange={handleTabChange}/>
                             </div>

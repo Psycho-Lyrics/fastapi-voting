@@ -2,8 +2,6 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getVotingStatusConfig } from './Formatters';
 import { Modal, Box, Button, Typography } from '@mui/material';
-import { deleteVote } from '../../services/api';
-import { toast } from 'react-toastify';
 import { TbTimezone } from "react-icons/tb";
 import { LuCalendar1, LuAlarmClock, LuTrash2 } from "react-icons/lu";
 import { IoMdStats } from "react-icons/io";
@@ -23,10 +21,8 @@ const VotingCard = ({ voting }) => {
     const handleDelete = async () => {
         try {
             await deleteVoting(voting.id);
-            toast.success("Голосование успешно удалено!");
             handleCloseModal();
         } catch (error) {
-            toast.error("Не удалось удалить голосование")
             console.log(error)
         }
     }

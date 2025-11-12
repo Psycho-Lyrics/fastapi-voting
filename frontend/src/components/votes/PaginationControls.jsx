@@ -6,7 +6,7 @@ import { RiArrowLeftSFill } from "react-icons/ri";
 const PaginationControls = ({currentPage, totalPages, hasNext, hasPrev, onNextPage, onPrevPage}) => {
     return (
         <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 w-full sm:w-auto">
-            <div className="flex items-center rounded-lg border md:w-42 border-[#CCCCCC] px-3 py-2 sm:px-5 sm:py-4 w-full sm:w-auto justify-between">
+            <div className="flex gap-2 items-center rounded-lg border border-[#CCCCCC] px-3 py-2 w-full sm:w-auto">
                 <div className="text-neutral-800 text-sm sm:text-base font-normal whitespace-nowrap">
                     {currentPage} из {totalPages}
                 </div>

@@ -19,3 +19,6 @@ export const refresh = (csrfToken) =>
         headers: { 'X-CSRF-Token': csrfToken },
     });
 
+export const changeCredentials = (credentials) =>
+    api.post('/user/profile/change-credentials', credentials)
+

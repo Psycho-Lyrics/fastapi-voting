@@ -1,14 +1,17 @@
 import React from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import AppContent from './AppContent';
-import { ToastContainer } from 'react-toastify';
+import { Toaster } from 'react-hot-toast';
 
 function App() {
   return (
 
       <Router>
+          <Toaster
+              position="bottom-left"
+              reverseOrder={false}
+              containerStyle={{ fontFamily: 'Inter, sans-serif' }}/>
         <AppContent />
-        <ToastContainer />
       </Router>
   );
 }

@@ -1,14 +1,31 @@
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import { getProfileData, updateProfileData } from '/src/services/api.js'
 import { TbCloudDownload } from "react-icons/tb";
 import {InputDefault} from "../Inputs.jsx";
+import {changeCredentials} from "../../services/api/user.js";
+import toast from 'react-hot-toast';
+import {BlueButton} from "../Button.jsx";
 
 
-const PersonalData = ({formData, setFormData}) => {
+const PersonalData = () => {
+    const [formData, setFormData] = useState({
+        last_name: '',
+        first_name: '',
+        surname: '',
+        email: '',
+    });
 
     const [isSaving, setIsSaving] = useState(false);
 
-
+    useEffect(() => {
+        const dataFromStorage = {
+            last_name: localStorage.getItem('last_name') ?? '',
+            first_name: localStorage.getItem('first_name') ?? '',
+            surname: localStorage.getItem('surname') ?? '',
+            email: localStorage.getItem('email') ?? '',
+        };
+        setFormData(prev => ({ ...prev, ...dataFromStorage }));
+    }, []);
 
     // Обработчик изменений в полях формы
     const handleChange = (e) => {
@@ -31,11 +48,18 @@ const PersonalData = ({formData, setFormData}) => {
                 email: formData.email
             };
 
-            await updateProfileData(updatableData);
+            const response = await changeCredentials(updatableData);
+            console.log(response);
+            localStorage.setItem('first_name', response.data.first_name);
+            localStorage.setItem('last_name', response.data.last_name);
+            localStorage.setItem('surname', response.data.surname);
+            localStorage.setItem('email', response.data.email);
             console.log('Данные успешно сохранены!');
+            toast.success('Данные успешно сохранены!');
             
         } catch (error) {
             console.error('Ошибка при сохранении данных:', error.message);
+            toast.error("Не удалось сохранить данные.")
             
         } finally {
             setIsSaving(false);
@@ -88,20 +112,18 @@ const PersonalData = ({formData, setFormData}) => {
                     name='email'
                 />
 
-                <button
-                    type="submit"
-                    disabled={isSaving}
-                    className="w-full h-12 md:h-[51px] bg-[#437DE9] rounded-lg flex items-center justify-center gap-2 text-white text-sm md:text-base font-semibold disabled:opacity-50"
-                >
+                <BlueButton onClick={handleSubmit} disabled={isSaving}>
                     {isSaving ? (
-                        <span>Сохранение...</span>
+                        <>
+                            Сохранение...
+                        </>
                     ) : (
                         <>
                             <TbCloudDownload size={24}/>
                             Сохранить изменения
                         </>
                     )}
-                </button>
+                </BlueButton>
             </div>
         </form>
     );
