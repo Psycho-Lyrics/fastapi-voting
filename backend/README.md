@@ -57,7 +57,7 @@ EMAIL_SUBMIT_EXPIRE_HOURS=2
 # SMTP
 SMTP_HOSTNAME=smtp.gmail.com
 SMTP_PORT=465
-SMTP_USER=<Почта адресата электронных писем>
+SMTP_USER=<Почта адресанта электронных писем>
 SMTP_PASSWORD=<Пароль приложения Google>
 
 # Конфигурация пагинации
