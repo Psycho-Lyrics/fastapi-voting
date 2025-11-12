@@ -27,7 +27,7 @@ class UserRepo(Base):
     async def change_credentials(self, data: dict, id: int) -> User:
 
         # --- Формирование и исполнение запроса ---
-        query = update(self.model).where(self.model.id == id,).values(**data)
+        query = update(self.model).where(self.model.id == id).values(**data)
         await self.session.execute(query)
 
         # --- Формирование и исполнение запроса на данные обновлённого пользователя ---
@@ -35,3 +35,16 @@ class UserRepo(Base):
 
         # --- Результат ---
         return user
+
+    async def change_email(self, data: dict, id: int) -> User:
+        pass # TODO: А ты сделай
+
+
+    async def change_password(self, password: str, id: int):
+        user = await self.session.get(self.model, id)
+        user.set_hash_password(password)
+
+        self.session.add(user)
+        await self.session.commit()
+
+        return True
