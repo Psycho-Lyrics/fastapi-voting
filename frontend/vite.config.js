@@ -14,7 +14,7 @@ export default defineConfig(({ mode }) => {
                 key: fs.readFileSync(env.VITE_SSL_KEY),
                 cert: fs.readFileSync(env.VITE_SSL_CERT)
             },
-            host: 'localhost',
+            host: true,
             port: 5173
         }
     }

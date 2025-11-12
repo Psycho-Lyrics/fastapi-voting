@@ -22,3 +22,8 @@ export const refresh = (csrfToken) =>
 export const changeCredentials = (credentials) =>
     api.post('/user/profile/change-credentials', credentials)
 
+export const changePassword = (password) =>
+    api.post('/user/profile/change-password', password)
+
+export const changePasswordConfirm = (token) =>
+    api.post('/user/profile/change-password-confirm', null, { params: { token } });

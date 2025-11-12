@@ -1,11 +1,10 @@
 import React from 'react';
-import { BrowserRouter as Router } from 'react-router-dom';
+import {BrowserRouter, BrowserRouter as Router} from 'react-router-dom';
 import AppContent from './AppContent';
 import { Toaster } from 'react-hot-toast';
 
 function App() {
   return (
-
       <Router>
           <Toaster
               position="bottom-left"

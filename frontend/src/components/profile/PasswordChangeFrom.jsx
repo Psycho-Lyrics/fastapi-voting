@@ -1,11 +1,15 @@
-import {useState} from 'react';
-import {changePassword} from "../../services/api";
+import {useEffect, useState} from 'react';
+import {changePassword, changePasswordConfirm} from "../../services/api/user";
 import {TbCloudDownload} from "react-icons/tb";
 import {InputPassword} from "../Inputs.jsx";
 import {BlueButton} from "../Button.jsx";
+import toast from "react-hot-toast";
+import {useNavigate, useParams} from "react-router-dom";
 
 
 const PasswordChangeForm = () => {
+    const {token} = useParams();
+    const navigate = useNavigate();
 
     const [password, setPassword] = useState({
         old_password: '',
@@ -13,7 +17,6 @@ const PasswordChangeForm = () => {
         confirm_new_password: '',
     });
 
-    const [message, setMessage] = useState('');
     const [isSaving, setIsSaving] = useState(false);
 
     const handleChange = (e) => {
@@ -24,9 +27,25 @@ const PasswordChangeForm = () => {
         }));
     };
 
+    useEffect(() => {
+        if (!token) return;
+        const confirmPasswordChange = async () => {
+            try {
+                const response = await changePasswordConfirm(token);
+                console.log(response);
+                toast.success('Пароль успешно обновлен!')
+                navigate("/profile", {replace: true});
+            } catch (error) {
+                console.log(error);
+                navigate("/profile", {replace: true});
+                toast.error('Не удалось обновить пароль!');
+            }
+        }
+        confirmPasswordChange()
+    }, [navigate, token])
+
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setMessage('');
 
         if (password.new_password !== password.confirm_new_password) {
             console.log('Новый пароль и его подтверждение не совпадают.');
