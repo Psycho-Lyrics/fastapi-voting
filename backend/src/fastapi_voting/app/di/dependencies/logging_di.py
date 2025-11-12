@@ -53,6 +53,7 @@ class LoggingExceptionDI:
         if self.context == "HTTP":
             result.extend([
                 f"{self.request.method} {self.request.url.path}",
+                f"Client-IP: {self.request.client.host}",
                 f"Origin: {self.request.headers.get('Origin')}",
                 f"User-Agent: {self.request.headers.get('User-Agent')}",
                 f"Host: {self.request.headers.get('Host')}",
