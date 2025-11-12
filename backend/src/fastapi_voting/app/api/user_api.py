@@ -2,19 +2,19 @@ import logging
 
 from datetime import datetime, timedelta, timezone
 
-from fastapi import APIRouter, status, Header
+from fastapi import APIRouter, status, Header, Request, Query
 from fastapi.responses import JSONResponse
 
 from src.fastapi_voting.app.core.settings import get_settings
 
 from src.fastapi_voting.app.di.annotations import (
     UserServiceAnnotation,
-
     TokenServiceAnnotation,
 
     AccessRequiredAnnotation,
     RefreshRequiredAnnotation,
     CSRFValidAnnotation,
+    EmailTokenRequiredAnnotation
 )
 
 from src.fastapi_voting.app.schemas.user_schema import InputCreateUserSchema
@@ -50,6 +50,7 @@ async def user_register(
 # --- Авторизация пользователя ---
 @user_router.post("/login", response_model=ResponseLoginUserSchema, status_code=status.HTTP_200_OK)
 async def user_login(
+        request: Request,
         data: InputLoginUserSchema,
 
         user_service: UserServiceAnnotation,
@@ -59,12 +60,13 @@ async def user_login(
     # --- Инициализация данных ---
     remember_flag = data.model_dump()["remember_me"]
     cookie_expire = datetime.now(timezone.utc) + timedelta(days=settings.JWT_REFRESH_EXPIRE_DAYS)
+    client_ip = request.client.host
 
     # --- Работа бизнес-сервиса ---
     logined_user = await user_service.login(data)
 
     # --- Генерация токенов ---
-    tokens = token_service.create_tokens(logined_user.id, remember_flag)
+    tokens = token_service.create_tokens(user_id=logined_user.id, refresh=remember_flag, client_ip=client_ip)
     csrf_token, signed_csrf = token_service.create_csrf()
 
     # --- Формирование ответа сервера ---
@@ -167,7 +169,9 @@ async def change_user_credentials(
 # -- Смена пароля ---
 # TODO: Смена пароля
 @user_router.post("/profile/change-password", status_code=status.HTTP_200_OK)
-async def change_user_password(
+async def change_user_password_init(
+        request: Request,
+
         access_payload: AccessRequiredAnnotation,
         data: InputChangePasswordSchema,
 
@@ -178,8 +182,26 @@ async def change_user_password(
     # --- Первичные данные ---
     data = data.model_dump()
     user_id = access_payload["sub"]
+    client_ip = request.client.host
 
     # --- Работа сервиса ---
-    await user_service.change_password(data, user_id)
+    await user_service.init_change_password(data, user_id, client_ip)
 
     return {"message": "email message sent"}
+
+
+@user_router.post("/profile/change-password-confirm", status_code=status.HTTP_200_OK)
+async def change_user_password_confirm(
+        email_token_payload: EmailTokenRequiredAnnotation,
+        user_service: UserServiceAnnotation,
+
+        token=Query(default=None, description="JWT-токен"),
+):
+    # --- Данные запроса ---
+    user_id = email_token_payload["sub"]
+
+    # --- Работа сервиса ---
+    await user_service.confirm_change_password(user_id)
+
+    # --- Ответ ---
+    return {"message": "password changed"}
