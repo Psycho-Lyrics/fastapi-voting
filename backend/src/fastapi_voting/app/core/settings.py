@@ -21,6 +21,9 @@ class Settings(BaseSettings):
     APP_HOST: str
     APP_PORT: int
 
+    # --- EMAIL ---
+    EMAIL_SUBMIT_EXPIRE_HOURS: int
+
     # --- SMTP ---
     SMTP_HOSTNAME: str
     SMTP_PORT: int

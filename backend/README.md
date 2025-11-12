@@ -51,11 +51,14 @@ fastapi-voting                          # Корневой каталог Poetry
 APP_HOST=127.0.0.1
 APP_PORT=5000
 
+# --- EMAIL ---
+EMAIL_SUBMIT_EXPIRE_HOURS=2
+
 # SMTP
 SMTP_HOSTNAME=smtp.gmail.com
 SMTP_PORT=465
-SMTP_USER=<email адресанта>
-SMTP_PASSWORD=<'Ваш пароль приложения'>
+SMTP_USER=<Почта адресата электронных писем>
+SMTP_PASSWORD=<Пароль приложения Google>
 
 # Конфигурация пагинации
 PER_PAGE=5
@@ -88,7 +91,6 @@ RDS_HOST=127.0.0.1
 RDS_PORT=6379
 RDS_DB=0
 RDS_PASSWORD=0000
-
 ```
 
 Для создания файла виртуального окружения непосредственно в корневом каталоге проекта(опционально):
