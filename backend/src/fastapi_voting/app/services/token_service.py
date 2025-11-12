@@ -71,5 +71,5 @@ class TokenService:
         ttl: timedelta = actual_expire - datetime.now(timezone.utc)
 
         # --- Размещение записи о токене ---
-        await self.redis.set(name=f"jwt-block:{token_payload['jti']}", value="1", ex=ttl.seconds)
+        await self.redis.setex(name=f"jwt-block:{token_payload['jti']}", time=ttl, value="1")
 

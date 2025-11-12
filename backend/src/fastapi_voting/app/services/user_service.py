@@ -1,5 +1,3 @@
-import logging
-
 from src.fastapi_voting.app.core.exception import UserNotFound, UserAlreadyExist, InvalidLogin
 
 from src.fastapi_voting.app.repositories.user_repo import UserRepo
@@ -12,13 +10,15 @@ from src.fastapi_voting.app.models.user import User
 
 from src.fastapi_voting.app.core.enums import RolesEnum
 
-
-logger = logging.getLogger("fastapi-voting")
+from src.fastapi_voting.app.services.background_task_service import BackgroundTaskService
+from src.fastapi_voting.app.services.email_service import EmailService
 
 
 class UserService:
-    def __init__(self, user_repo: UserRepo):
+    def __init__(self, user_repo: UserRepo, email_service: EmailService, background_task_service: BackgroundTaskService):
         self.user_repo = user_repo
+        self.email_service = email_service
+        self.background_task_service = background_task_service
 
 
     async def register(self, data: InputCreateUserSchema) -> User:
@@ -77,3 +77,25 @@ class UserService:
 
         # --- Результат ---
         return user
+
+
+    async def change_password(self, data: dict, user_id: int):
+        """Отвечает за смену пароля пользователя."""
+
+        # --- Проверка на существование пользователя ---
+        user: User = await self.user_repo.get_by_id(id=user_id)
+        if not user:
+            raise UserNotFound(log_message=f"Пользователь с ID: {user_id} не найден.")
+
+        # --- Верификация пароля ---
+        pass_is_valid: bool = user.verify_password(password=data["old_password"])
+        if not pass_is_valid:
+            raise InvalidLogin(log_message=f"Указан неверный пароль <{data['password']}> для пользователя с ID <{user_id}>.")
+
+        # --- Отправка письма для подтверждения операции ---
+        subject = "Подтверждение смены пароля."
+        message = "#" # TODO: Ожидаю вёрстку шаблона письма
+        await self.email_service.send(subject, message, recipients=[user.email])
+
+        # --- Формирование отложенной операции ---
+        #await self.background_task_service

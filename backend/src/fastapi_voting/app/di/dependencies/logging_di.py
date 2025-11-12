@@ -47,20 +47,19 @@ class LoggingExceptionDI:
     def get_log_string(self, detail: str):
 
         # --- Вспомогательные данные ---
-        result = ""
+        result = []
 
         # --- Данные для логирования ---
         if self.context == "HTTP":
-            url = self.request.url.path
-            request_method = self.request.method
-
-            user_agent = self.request.headers.get("User-Agent")
-            referer = self.request.headers.get("Referer")
-            origin = self.request.headers.get("Origin")
-            host = self.request.headers.get("Host")
-
-            result += f"{request_method} {url} - Origin: {origin}, User-Agent: {user_agent}, Host: {host}, Referer: {referer} | "
+            result.extend([
+                f"{self.request.method} {self.request.url.path}",
+                f"Origin: {self.request.headers.get('Origin')}",
+                f"User-Agent: {self.request.headers.get('User-Agent')}",
+                f"Host: {self.request.headers.get('Host')}",
+                f"Referer: {self.request.headers.get('Referer')}",
+            ])
 
         # --- Формирование ответа ---
-        result += f"Detail: {detail}"
+        result.extend([f"Detail: {detail}"])
+        result = "| ".join(result)
         return result

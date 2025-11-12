@@ -21,6 +21,8 @@ from src.fastapi_voting.app.schemas.user_schema import InputCreateUserSchema
 from src.fastapi_voting.app.schemas.user_schema import InputLoginUserSchema, ResponseLoginUserSchema, UserSchema
 from src.fastapi_voting.app.schemas.user_schema import OutputRefreshUserSchema
 from src.fastapi_voting.app.schemas.user_schema import InputChangeCredentialsSchema
+from src.fastapi_voting.app.schemas.user_schema import InputChangePasswordSchema
+
 
 
 # --- Инициализация первичных данных и вспомогательных инструментов---
@@ -84,6 +86,8 @@ async def user_login(
 async def user_acs_logout(
         access_payload: AccessRequiredAnnotation,
         token_service : TokenServiceAnnotation,
+
+        access_token = Header(default=None, description="JWT-Токен")
 ):
     # --- Работа сервиса ---
     await token_service.revoke_token(access_payload)
@@ -97,6 +101,8 @@ async def user_ref_logout(
         csrf_is_valid: CSRFValidAnnotation,
         refresh_payload: RefreshRequiredAnnotation,
         token_service : TokenServiceAnnotation,
+
+        csrf_token = Header(default=None, description="CSRF-Токен")
 ):
     # --- Работа сервиса ---
     await token_service.revoke_token(refresh_payload)
@@ -111,6 +117,8 @@ async def user_refresh(
         csrf_is_valid: CSRFValidAnnotation,
         refresh_payload: RefreshRequiredAnnotation,
         token_service : TokenServiceAnnotation,
+
+        csrf_token=Header(default=None, description="CSRF-Токен")
 ):
     # --- Первичные данные ---
     user_id = refresh_payload["sub"]
@@ -155,3 +163,23 @@ async def change_user_credentials(
     # --- Ответ ---
     return user
 
+
+# -- Смена пароля ---
+# TODO: Смена пароля
+@user_router.post("/profile/change-password", status_code=status.HTTP_200_OK)
+async def change_user_password(
+        access_payload: AccessRequiredAnnotation,
+        data: InputChangePasswordSchema,
+
+        user_service: UserServiceAnnotation,
+
+        access_token = Header(default=None, description="JWT-Токен"),
+):
+    # --- Первичные данные ---
+    data = data.model_dump()
+    user_id = access_payload["sub"]
+
+    # --- Работа сервиса ---
+    await user_service.change_password(data, user_id)
+
+    return {"message": "email message sent"}

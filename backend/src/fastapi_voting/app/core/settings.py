@@ -21,6 +21,12 @@ class Settings(BaseSettings):
     APP_HOST: str
     APP_PORT: int
 
+    # --- SMTP ---
+    SMTP_HOSTNAME: str
+    SMTP_PORT: int
+    SMTP_USER: str
+    SMTP_PASSWORD: str
+
     # --- Конфигурация пагинации ---
     PER_PAGE: int
 

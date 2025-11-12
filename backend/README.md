@@ -51,6 +51,12 @@ fastapi-voting                          # Корневой каталог Poetry
 APP_HOST=127.0.0.1
 APP_PORT=5000
 
+# SMTP
+SMTP_HOSTNAME=smtp.gmail.com
+SMTP_PORT=465
+SMTP_USER=<email адресанта>
+SMTP_PASSWORD=<'Ваш пароль приложения'>
+
 # Конфигурация пагинации
 PER_PAGE=5
 
