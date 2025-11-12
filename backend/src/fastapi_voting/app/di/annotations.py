@@ -4,6 +4,8 @@ from fastapi import Depends
 
 from typing import Annotated
 
+from src.fastapi_voting.app.core.enums import TokenTypeEnum
+
 from src.fastapi_voting.app.services.token_service import TokenService
 from src.fastapi_voting.app.services.user_service import UserService
 from src.fastapi_voting.app.services.department_service import DepartmentService
@@ -32,8 +34,10 @@ VotingServiceAnnotation = Annotated[VotingService, Depends(get_voting_service)]
 # --- Аннотации для токенов ---
 TokenServiceAnnotation = Annotated[TokenService, Depends(get_token_service)]
 
-AccessRequiredAnnotation = Annotated[AuthTokenRequired, Depends(AuthTokenRequired("access_token"))]
-RefreshRequiredAnnotation = Annotated[AuthTokenRequired, Depends(AuthTokenRequired("refresh_token"))]
+AccessRequiredAnnotation = Annotated[AuthTokenRequired, Depends(AuthTokenRequired(TokenTypeEnum.ACCESS_TOKEN))]
+RefreshRequiredAnnotation = Annotated[AuthTokenRequired, Depends(AuthTokenRequired(TokenTypeEnum.REFRESH_TOKEN))]
+EmailTokenRequiredAnnotation = Annotated[AuthTokenRequired, Depends(AuthTokenRequired(TokenTypeEnum.EMAIL_TOKEN))]
+
 CSRFValidAnnotation = Annotated[csrf_valid, Depends(csrf_valid)]
 
 # --- Аннотации для Redis ---
