@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import {Link, useNavigate} from 'react-router-dom';
 import {loginUser} from '../services/api/user.js'
 import {InputDefault, InputPassword} from "../components/Inputs.jsx";
+import {BlackButton, GrayButton} from "../components/Button.jsx";
 
 const LoginPage = () => {
 
@@ -79,7 +80,7 @@ const LoginPage = () => {
                     className="flex flex-col md:flex-row max-w-4xl bg-white shadow-lg rounded-[20px] overflow-hidden">
                     {/* Левая часть (форма) */}
                     <div className="px-6 md:px-[32px] py-6 w-full md:w-[467px] grow">
-                        <form onSubmit={handleSubmit}>
+                        <form>
                             <InputDefault
                                 type="email"
                                 title="Электронная почта"
@@ -103,7 +104,7 @@ const LoginPage = () => {
                             />
 
 
-                            <div className="flex justify-start mb-6">
+                            <div className="flex justify-start mb-2">
                                 <a href="#" className="text-gray-500 text-sm hover:underline">
                                     Забыли пароль?
                                 </a>
@@ -130,12 +131,7 @@ const LoginPage = () => {
                                 </p>
                             )}
 
-                            <button
-                                type="submit"
-                                className="w-full bg-black text-white px-4 py-4 md:px-[20px] md:py-[16px] rounded-[12px] mt-6 md:mt-12"
-                            >
-                                Войти
-                            </button>
+                            <BlackButton onClick={handleSubmit}>Войти</BlackButton>
                         </form>
                     </div>
 
@@ -151,12 +147,7 @@ const LoginPage = () => {
                             <p className="text-sm mb-6">
                                 Панель управления системой электронных голосований
                             </p>
-                            <Link
-                                to="/register"
-                                className="block border border-white text-center rounded-xl px-4 py-4 md:px-[20px] md:py-[16px] w-full"
-                            >
-                                Регистрация
-                            </Link>
+                            <GrayButton onClick={() => navigate('/register')}>Регистрация</GrayButton>
                         </div>
                     </div>
                 </div>

@@ -121,8 +121,7 @@ const VotesPage = () => {
                     </div>
 
                     <div className="mt-4 flex flex-col gap-3">
-                        <div
-                            className="flex flex-col md:flex-row md:justify-between bg-white shadow-lg items-center p-4 md:p-6 rounded-xl md:rounded-[20px] gap-4 lg:flex-nowrap">
+                        <div className="flex flex-col md:flex-row md:justify-between bg-white shadow-lg items-center p-4 md:p-6 rounded-xl md:rounded-[20px] gap-4 lg:flex-nowrap">
                             <div className="flex gap-4 w-full justify-center md:w-auto md:justify-start">
                                 <VotingControls activeTab={activeTab} onTabChange={handleTabChange}/>
                             </div>

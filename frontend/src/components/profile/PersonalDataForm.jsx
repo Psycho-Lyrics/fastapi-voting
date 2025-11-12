@@ -4,6 +4,7 @@ import { TbCloudDownload } from "react-icons/tb";
 import {InputDefault} from "../Inputs.jsx";
 import {changeCredentials} from "../../services/api/user.js";
 import toast from 'react-hot-toast';
+import {BlueButton} from "../Button.jsx";
 
 
 const PersonalData = () => {
@@ -111,20 +112,18 @@ const PersonalData = () => {
                     name='email'
                 />
 
-                <button
-                    type="submit"
-                    disabled={isSaving}
-                    className="w-full h-12 md:h-[51px] bg-[#437DE9] rounded-lg flex items-center justify-center gap-2 text-white text-sm md:text-base font-semibold disabled:opacity-50"
-                >
+                <BlueButton onClick={handleSubmit} disabled={isSaving}>
                     {isSaving ? (
-                        <span>Сохранение...</span>
+                        <>
+                            Сохранение...
+                        </>
                     ) : (
                         <>
                             <TbCloudDownload size={24}/>
                             Сохранить изменения
                         </>
                     )}
-                </button>
+                </BlueButton>
             </div>
         </form>
     );

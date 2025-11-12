@@ -3,6 +3,7 @@ import HeaderLogin from "/src/components/HeaderLogin";
 import {Link, useNavigate} from 'react-router-dom';
 import {register} from '../services/api/user.js'
 import {InputDefault, InputPassword} from "../components/Inputs.jsx";
+import {BlackButton, GrayButton} from "../components/Button.jsx";
 
 const RegisterPage = () => {
     const [formData, setFormData] = useState({
@@ -78,7 +79,7 @@ const RegisterPage = () => {
 
                     {/* Форма */}
                     <div className="px-6 py-6">
-                        <form onSubmit={handleSubmit}>
+                        <form>
                             <label className="block text-base">Зарегистрироваться как</label>
                             <select
                                 className="w-full border rounded-xl px-3 py-3 mb-4"
@@ -186,10 +187,7 @@ const RegisterPage = () => {
                                 </p>
                             )}
 
-                            <button type="submit"
-                                    className="w-full bg-black text-white px-4 py-4 rounded-[12px] my-4 text-lg">
-                                Зарегистрироваться
-                            </button>
+                            <BlackButton onClick={handleSubmit}>Зарегистрироваться</BlackButton>
                         </form>
                     </div>
                     <div className="bg-[#212121] text-white p-6">
@@ -202,10 +200,7 @@ const RegisterPage = () => {
                             <p className="text-sm mb-6">
                                 Панель управления системой электронных голосований
                             </p>
-                            <Link to="/login"
-                                  className="block border border-white text-center rounded-xl px-4 py-4 w-full">
-                                Авторизация
-                            </Link>
+                            <GrayButton onClick={() => navigate('/login')}>Авторизация</GrayButton>
                         </div>
                     </div>
                 </div>
@@ -222,17 +217,13 @@ const RegisterPage = () => {
                                 Панель управления системой электронных голосований
                             </span>
                             <div className="w-full h-[20px]"></div>
-                            <Link to="/login"
-                                  className="block border border-white text-center rounded-xl px-[20px] py-[16px] w-full">
-                                Авторизация
-                            </Link>
+                            <GrayButton onClick={() => navigate('/login')}>Авторизация</GrayButton>
                         </div>
                     </div>
 
                     {/* Форма */}
                     <div className="px-[32px] py-6 w-[467px] grow">
-                        <form onSubmit={handleSubmit}>
-
+                        <form>
                             <label className="block text-base">Зарегистрироваться как</label>
                             <select
                                 className="w-full border rounded-xl px-3 py-2 h-[51px] mb-4"
@@ -340,10 +331,7 @@ const RegisterPage = () => {
                                 </p>
                             )}
 
-                            <button type="submit"
-                                    className="w-full bg-black  text-white px-[20px] py-[16px] rounded-[12px] mt-10">
-                                Зарегистрироваться
-                            </button>
+                            <BlackButton onClick={handleSubmit}>Регистрация</BlackButton>
                         </form>
                     </div>
                 </div>

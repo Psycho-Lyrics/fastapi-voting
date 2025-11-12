@@ -1,10 +1,11 @@
-import { useState } from 'react';
-import { changePassword } from "../../services/api";
-import { TbCloudDownload } from "react-icons/tb";
+import {useState} from 'react';
+import {changePassword} from "../../services/api";
+import {TbCloudDownload} from "react-icons/tb";
 import {InputPassword} from "../Inputs.jsx";
+import {BlueButton} from "../Button.jsx";
 
 
-const PasswordChangeForm = () => {  
+const PasswordChangeForm = () => {
 
     const [password, setPassword] = useState({
         old_password: '',
@@ -16,7 +17,7 @@ const PasswordChangeForm = () => {
     const [isSaving, setIsSaving] = useState(false);
 
     const handleChange = (e) => {
-        const { name, value } = e.target;
+        const {name, value} = e.target;
         setPassword(prevPasswords => ({
             ...prevPasswords,
             [name]: value,
@@ -47,8 +48,7 @@ const PasswordChangeForm = () => {
                 new_password: '',
                 confirm_new_password: '',
             });
-        }
-        catch (error) {
+        } catch (error) {
             console.error('Ошибка при сохранении данных:', error.message);
         } finally {
             setIsSaving(false);
@@ -56,7 +56,7 @@ const PasswordChangeForm = () => {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="shadow-lg bg-white rounded-[15px] md:rounded-[20px] xl:w-[473px]">
+        <form className="shadow-lg bg-white rounded-[15px] md:rounded-[20px] xl:w-[473px]">
             <div className="p-4 md:p-[32px] space-y-4 md:space-y-[20px]">
                 <h1 className="text-neutral-800 text-xl md:text-2xl font-semibold">Пароль</h1>
 
@@ -94,20 +94,18 @@ const PasswordChangeForm = () => {
                     name="confirm_new_password"
                 />
 
-                <button
-                    type="submit"
-                    disabled={isSaving}
-                    className="w-full h-12 md:h-[51px] bg-[#437DE9] rounded-lg flex items-center justify-center gap-2 text-white text-sm md:text-base font-semibold disabled:opacity-50"
-                >
+                <BlueButton onClick={handleSubmit} disabled={isSaving}>
                     {isSaving ? (
-                        <span>Сохранение...</span>
+                        <>
+                            Сохранение...
+                        </>
                     ) : (
                         <>
-                            <TbCloudDownload size={24} />
+                            <TbCloudDownload size={24}/>
                             Сохранить изменения
                         </>
                     )}
-                </button>
+                </BlueButton>
             </div>
         </form>
     );
