@@ -1,5 +1,7 @@
 from aiosmtplib import SMTP
 
+from jinja2 import Environment, PackageLoader
+
 from email.utils import formatdate
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -14,7 +16,10 @@ settings = get_settings()
 # --- Сервис ---
 class EmailService:
 
-    async def send(self, subject: str, message: str, recipients: list):
+    async def send_change_password_email(self, recipients: list, token: str | None = None):
+
+        # --- Первичные данные ---
+        subject = "Подтверждение смены пароля."
 
         # --- Создание подключения и отправка письма ---
         async with SMTP(
@@ -25,11 +30,25 @@ class EmailService:
             use_tls=True
 
         ) as server:
-            message = self._create_email_message(subject, message, recipients)
+            message = await self._create_email_message(subject, recipients, token)
             await server.send_message(message)
 
+
     @staticmethod
-    def _create_email_message(subject: str, message: str, recipients: list):
+    async def _create_email_message(subject: str, recipients: list, token: str | None):
+
+        # --- Рендеринг шаблона для письма ---
+        environment = Environment(
+            loader=PackageLoader("fastapi_voting", "templates"),
+            autoescape=True,
+            enable_async=True,
+            variable_start_string="{{", variable_end_string="}}"
+        )
+        environment.globals["verification_token"] = token
+        environment.globals["expire_share"] = settings.EMAIL_SUBMIT_EXPIRE_HOURS
+
+        template = environment.get_template("change_password_email.html")
+        message = await template.render_async()
 
         # --- Создание контейнера и определение заголовков письма ---
         msg = MIMEMultipart("alternative")
@@ -37,10 +56,6 @@ class EmailService:
         msg["To"] = ",".join(recipients)
         msg["Date"] = formatdate(localtime=True)
         msg["Subject"] = subject
-
-        # --- Определение простого текстового тела ---
-        text_part = MIMEText(message, "plain", "utf-8")
-        msg.attach(text_part)
 
         # --- Определение современного тела с HTML-шаблоном ---
         html_part = MIMEText(message, "html", "utf-8")
