@@ -86,3 +86,21 @@ class CSRFTokenExceptionDI(TokenExceptionDI):
 
     def revoked(self, log_message: str):
         raise super()._revoked(log_message=log_message)
+
+
+# --- Исключения токенов ---
+@TokenExceptionDI.register_handler(TokenTypeEnum.EMAIL_TOKEN)
+class EmailTokenExceptionDI(TokenExceptionDI):
+    """Зависимость для работы с исключениями для access-токенов"""
+
+    def __init__(self):
+        pass
+
+    def invalid(self, log_message: str):
+        raise super()._invalid(log_message, status.HTTP_401_UNAUTHORIZED, "email_token_required")
+
+    def expired(self, log_message: str):
+        raise super()._expired(log_message=log_message, status_code=status.HTTP_401_UNAUTHORIZED, www_error="email_token_expired")
+
+    def revoked(self, log_message: str):
+        raise super()._revoked(log_message=log_message)
