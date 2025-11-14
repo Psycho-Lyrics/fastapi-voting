@@ -15,7 +15,7 @@ class AppException(HTTPException):
 
         # --- Адаптация заголовков ---
         if status_code == 401:
-            headers = {"WWW-Authenticate": f"Bearer realm=\"api\", error=\"{www_error}\""}
+            headers = {"WWW-Authenticate": f"Bearer realm=\"Restricted Area\", error=\"{www_error}\""}
 
         # --- Возбуждение HTTPException ---
         super().__init__(detail=detail, status_code=status_code, headers=headers)
