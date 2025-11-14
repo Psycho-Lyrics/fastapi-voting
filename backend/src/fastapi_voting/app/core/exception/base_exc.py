@@ -9,7 +9,6 @@ class AppException(HTTPException):
 
         # --- Свойства класса и вспомогательные данные ---
         headers = None
-
         self.exception_detail = detail
         self.log_message = log_detail
 

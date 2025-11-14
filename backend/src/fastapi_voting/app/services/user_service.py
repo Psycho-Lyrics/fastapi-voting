@@ -1,4 +1,4 @@
-from src.fastapi_voting.app.core.exception import UserNotFound, UserAlreadyExist, InvalidLogin
+from src.fastapi_voting.app.core.exception.simple_exc import UserNotFound, UserAlreadyExist, InvalidLogin
 
 from src.fastapi_voting.app.repositories.user_repo import UserRepo
 
@@ -103,11 +103,11 @@ class UserService:
             raise InvalidLogin(log_message=f"Указан неверный пароль <{data['old_password']}> для пользователя с ID <{user_id}>.")
 
         # --- Отправка письма для подтверждения операции ---
-        email_verification_token = self.token_service.create_email_verification_token(user_id, client_ip)
-
-        await self.email_service.send_change_password_email(
-            token=email_verification_token,
-            recipients=[user.email])
+        # email_verification_token = self.token_service.create_email_verification_token(user_id, client_ip)
+        #
+        # await self.email_service.send_change_password_email( TODO: Пересмотреть механизм подтверждения почты
+        #     token=email_verification_token,
+        #     recipients=[user.email])
 
         # --- Формирование отложенной операции ---
         await self.task_service.add_change_password_task(user_id, data["new_password"])

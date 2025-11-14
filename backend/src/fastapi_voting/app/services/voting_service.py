@@ -9,7 +9,7 @@ from src.fastapi_voting.app.models import Voting
 
 from src.fastapi_voting.app.schemas.voting_schema import ResponseAllVotingsSchema
 
-from src.fastapi_voting.app.core.exception import VotingNotFound
+from src.fastapi_voting.app.core.exception.simple_exc import VotingNotFound
 
 
 # --- Инструментарий ---
