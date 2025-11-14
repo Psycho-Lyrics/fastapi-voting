@@ -14,7 +14,7 @@ from src.fastapi_voting.app.core.enums import TokenTypeEnum
 # from src.fastapi_voting.app.di.annotations import RedisClientAnnotation TODO: Цикличные импорты. Пересмотреть в пользу использования аннотации
 from src.fastapi_voting.app.di.dependencies.databases_di import get_redis
 
-from src.fastapi_voting.app.di.dependencies.exception.token_exception_di import TokenExceptionDI
+from src.fastapi_voting.app.core.factory.token_exception_factory import TokenExceptionFactory
 
 
 # --- Инструментарий ---
@@ -24,9 +24,50 @@ settings = get_settings()
 class AuthTokenRequired:
     """Класс-зависимость. Валидирует конкретный токен и возвращает payload """
 
-    def __init__(self, token_type):
-        TokenTypeEnum(token_type)
+    def __init__(self, token_type: TokenTypeEnum):
         self.token_type = token_type
+
+
+    async def __call__(
+            self,
+            request: Request,
+            redis_client: Redis = Depends(get_redis),
+    ):
+        # --- Хэндлер и входные данные ---
+        token_exc = TokenExceptionFactory.get_handler(token_type=self.token_type)
+        token = self.extract_token(request)
+
+        # --- Проверка на наличие токена во входных данных ---
+        if token is None:
+            raise token_exc.invalid(log_message=f"Во входящем запросе отсутствует {self.token_type.value}.")
+
+        # --- Валидация токена и извлечение payload-данных ---
+        try:
+            payload = jwt.decode(
+                token,
+                key=settings.JWT_SECRET_KEY,
+                algorithms=["HS256"]
+            )
+            if self.token_type.value != payload["token_type"]:
+                raise token_exc.invalid(log_message=f"Некорректный тип токена: <{payload['token_type']}>. Ожидался <{self.token_type.value}>.")
+
+            if payload["ip"] != request.client.host: # TODO: Привязка по fingerprint
+                raise token_exc.invalid(log_message=f"IP токена <{payload['ip']}> не совпадает с IP пользователя <{request.client.host}>")
+
+        except ExpiredSignatureError:
+            raise token_exc.expired(log_message=f"Был передан просроченный {self.token_type.value}.")
+
+        except JWTError:
+            raise token_exc.invalid(log_message=f"Семантика {self.token_type.value} была нарушена.")
+
+        # --- Проверка отозванных токенов ---
+        token_is_revoked = await redis_client.exists(f"jwt-block:{payload['jti']}")
+        if token_is_revoked:
+            raise token_exc.revoked(log_message=f"Был передан отозванный {self.token_type.value}.")
+
+        # --- Ответ ---
+        return payload
+
 
     def extract_token(self, request: Request):
         """Извлекает и возвращает валидную строку токена"""
@@ -43,63 +84,18 @@ class AuthTokenRequired:
             token_string = request.cookies.get("refresh-token")
             return token_string
 
-        # --- Email ---
-        elif self.token_type == TokenTypeEnum.EMAIL_TOKEN:
-            token_string = request.query_params.get("token")
-            return token_string
-
         return None
-
-    async def __call__(
-            self,
-            request: Request,
-            redis_client: Redis = Depends(get_redis),
-    ):
-        # --- Внедрение зависимости ---
-        token_exc = TokenExceptionDI(self.token_type)() # TODO: Пересмотреть реализацию фабрики
-
-        # --- Работа со входными данными ---
-        token = self.extract_token(request)
-
-        # --- Проверка на наличие токена во входных данных ---
-        if token is None:
-            raise token_exc.invalid(log_message=f"Во входящем запросе отсутствует {self.token_type.value}.")
-
-        # --- Валидация токена и извлечение payload-данных ---
-        try:
-            payload = jwt.decode(
-                token,
-                key=settings.JWT_SECRET_KEY,
-                algorithms=["HS256"]
-            )
-            if self.token_type.value != payload["token_type"]:
-                raise token_exc.invalid(log_message=f"Некорректный тип токена: {payload['token_type']}. Ожидался {self.token_type.value}.")
-
-            if payload["ip"] != request.client.host:
-                raise token_exc.invalid(log_message=f"IP токена <{payload['ip']}> не совпадает с IP пользователя <{request.client.host}>")
-
-        except ExpiredSignatureError:
-            raise token_exc.expired(log_message=f"Был передан просроченный {self.token_type.value}.")
-
-        except JWTError:
-            raise token_exc.invalid(log_message=f"Семантика {self.token_type.value} была нарушена.")
-
-        # --- Проверка отозванных токенов ---
-        token_is_revoked = await redis_client.exists(f"jwt-block:{payload['jti']}")
-
-        if token_is_revoked:
-            raise token_exc.revoked(log_message=f"Был передан отозванный {self.token_type.value}.")
-
-        # --- Ответ ---
-        return payload
 
 
 # --- CSRF ---
 async def csrf_valid(
         request: Request,
         csrf_protect: CsrfProtect = Depends(),
-        token_exc: TokenExceptionDI = Depends(TokenExceptionDI("csrf_token")),
 ):
+    # --- Выбор хэндлера для токена ---
+    token_exc = TokenExceptionFactory.get_handler(token_type=TokenTypeEnum.CSRF_TOKEN)
+
+    # --- Валидация токена ---
     try:
         await csrf_protect.validate_csrf(
             request=request,
