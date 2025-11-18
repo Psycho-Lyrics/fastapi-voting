@@ -99,19 +99,19 @@ poetry install
 ```
 
 ## Установка прокси-сервера для приложения
-Предварительно установив архив с Nginx (https://nginx.org/download/nginx-1.28.0.zip), следуйте к каталогу `src/fastapi_voting/nginx/`.
+Предварительно установив архив с Nginx (https://nginx.org/download/nginx-1.28.0.zip), следуйте к каталогу `src/nginx/`.
 
-В корне каталога `src/fastapi_voting/nginx/` создайте два подкаталога: `core/` и `SSL/fastapi-voting/`.
+В корне каталога `src/nginx/` создайте два подкаталога: `core/` и `SSL/fastapi-voting/`.
 Разместите в подкаталоге `core/` содержимое установленного ранее архива с Nginx
 
-В корне каталога `src/fastapi_voting/nginx/` располагается файл с именем `nginx.conf`. 
-Переместите этот файл в каталог `src/fastapi_voting/nginx/core/conf/` с заменой.
+В корне каталога `src/nginx/` располагается файл с именем `nginx.conf`. 
+Переместите этот файл в каталог `src/nginx/core/conf/` с заменой.
 
 
 ### Генерация сертификата.
 Для корректной работы шифрования трафика по протоколу TLS требуется иметь SSL-сертификат и приватный ключ.
 
-Для генерации самоподписанного SSL-сертификата и приватного ключа - перейдите в `src/fastapi_voting/nginx/SSL/fastapi-voting/`
+Для генерации самоподписанного SSL-сертификата и приватного ключа - перейдите в `src/nginx/SSL/fastapi-voting/`
 , и выполните инструкцию:
 ```commandline
 openssl req -x509 -sha256 -nodes -days 365 -newkey rsa:2048 -keyout privateKey.key -out certificate.crt
