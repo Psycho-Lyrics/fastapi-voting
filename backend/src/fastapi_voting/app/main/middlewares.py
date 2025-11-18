@@ -9,7 +9,8 @@ from src.fastapi_voting.app.di.dependencies.logging_di import LoggingExceptionDI
 
 # --- Конфигурация обработчиков ---
 origins = [
-    "https://localhost:5173"
+    "https://localhost:5173",
+    "https://192.168.1.105:5173",
 ]
 
 # --- Пользовательские обработчики ---

@@ -18,8 +18,10 @@ class CsrfSettings(BaseModel):
 class Settings(BaseSettings):
 
     # --- Конфигурация приложения ---
-    APP_HOST: str
     APP_PORT: int
+
+    # --- EMAIL ---
+    EMAIL_SUBMIT_EXPIRE_HOURS: int
 
     # --- SMTP ---
     SMTP_HOSTNAME: str
@@ -40,10 +42,6 @@ class Settings(BaseSettings):
     CSRF_COOKIE_SAMESITE : str
     CSRF_MAX_AGE: int
     CSRF_COOKIE_SECURE: bool
-
-    # --- TLS ---
-    TLS_PRIVATE_KEY: str
-    TLS_CERTIFICATE: str
 
     # --- MySQL ---
     DB_HOST: str

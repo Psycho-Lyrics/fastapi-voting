@@ -2,7 +2,7 @@ from fastapi import Request, status, FastAPI
 
 from fastapi.responses import JSONResponse
 
-from src.fastapi_voting.app.core.exception import AppException
+from src.fastapi_voting.app.core.exception.base_exc import AppException
 
 from src.fastapi_voting.app.di.dependencies.logging_di import LoggingExceptionDI
 

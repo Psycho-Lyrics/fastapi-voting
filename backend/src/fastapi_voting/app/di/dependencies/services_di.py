@@ -6,7 +6,7 @@ from fastapi import Depends
 
 from fastapi_csrf_protect import CsrfProtect
 
-from src.fastapi_voting.app.services.background_task_service import BackgroundTaskService
+from src.fastapi_voting.app.services.task_service import TaskService
 from src.fastapi_voting.app.services.token_service import TokenService
 
 from src.fastapi_voting.app.services.voting_service import VotingService
@@ -27,8 +27,8 @@ from src.fastapi_voting.app.di.dependencies.databases_di import (
     get_redis
 )
 from src.fastapi_voting.app.di.dependencies.email_di import get_email_service
-from src.fastapi_voting.app.di.dependencies.background_task_di import get_background_task_service
-
+from src.fastapi_voting.app.di.dependencies.task_di import get_task_service
+from src.fastapi_voting.app.di.dependencies.token_di import get_token_service
 
 
 # --- Инициализация первичных данных ---
@@ -39,9 +39,10 @@ logger = logging.Logger("fastapi-voting")
 async def get_user_service(
         repo: UserRepo = Depends(get_user_repo),
         email_service: EmailService = Depends(get_email_service),
-        task_service: BackgroundTaskService = Depends(get_background_task_service),
+        task_service: TaskService = Depends(get_task_service),
+        token_service: TokenService = Depends(get_token_service),
 ):
-    return UserService(repo, email_service, task_service)
+    return UserService(repo, email_service, task_service, token_service)
 
 
 async def get_department_service(repo: DepartmentRepo = Depends(get_department_repo)):
@@ -50,12 +51,5 @@ async def get_department_service(repo: DepartmentRepo = Depends(get_department_r
 async def get_voting_service(repo: VotingRepo = Depends(get_voting_repo)):
     return VotingService(repo)
 
-
-# --- Определение зависимостей для токенов ---
-async def get_token_service(
-        redis_client: Redis = Depends(get_redis),
-        csrf_protect: CsrfProtect = Depends(),
-):
-    return TokenService(redis_client, csrf_protect)
 
 

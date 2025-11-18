@@ -7,3 +7,6 @@
 /.idea/
 
 __pycache__/
+
+/src/nginx/core/
+/src/nginx/SSL/

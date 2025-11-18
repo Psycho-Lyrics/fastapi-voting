@@ -7,7 +7,11 @@ from fastapi_csrf_protect import CsrfProtect
 
 from datetime import datetime, timedelta, timezone
 
+from sqlalchemy.sql.functions import now
+
 from src.fastapi_voting.app.core.settings import get_settings
+
+from src.fastapi_voting.app.core.enums import TokenTypeEnum
 
 
 # --- Инструментарий ---
@@ -20,34 +24,44 @@ class TokenService:
         self.redis = redis
         self.csrf_protect = csrf_protect
 
+    @staticmethod
+    def _create_token(user_id: int, token_type: TokenTypeEnum, expire: timedelta, client_ip: str):
+        """Отвечает за генерацию токена указанного типа."""
 
-    def create_tokens(self, user_id: int, refresh: bool = False) -> dict[str, str]:
+        # --- Формирование полезной нагрузки токена ---
+        exp = datetime.now(timezone.utc) + expire
+        payload = {
+            "sub": str(user_id),
+            "ip": client_ip,
+            "jti": str(uuid.uuid4()),
+            "token_type": token_type.value,
+            "exp": int(exp.timestamp()),
+            "iat": int(datetime.now(timezone.utc).timestamp()),
+        }
+        # --- Генерация токена и ответ ---
+        token = jwt.encode(payload, settings.JWT_SECRET_KEY, algorithm="HS256")
+        return token
+
+
+    def create_tokens(self, user_id: int, client_ip: str, refresh: bool = False) -> dict[str, str]:
         """Формирование JWT-токенов"""
 
         # --- Access-Token ---
-        exp = datetime.now() + timedelta(minutes=settings.JWT_ACCESS_EXPIRE_MINUTES)
-        now = datetime.now(timezone.utc)
-        payload = {
-            "sub": str(user_id),
-            "token_type": "access",
-            "jti": str(uuid.uuid4()),
-            "exp": int(exp.timestamp()),
-            "iat": int(now.timestamp())
-        }
-        access_token: str = jwt.encode(payload, settings.JWT_SECRET_KEY, algorithm="HS256")
-        # TODO: Дублирование кода. Пересмотреть
+        access_token = self._create_token(
+            user_id=user_id,
+            client_ip=client_ip,
+            token_type=TokenTypeEnum.ACCESS_TOKEN,
+            expire=timedelta(minutes=settings.JWT_ACCESS_EXPIRE_MINUTES),
+        )
+
         # --- Refresh-Token ---
         if refresh:
-            exp = datetime.now() + timedelta(days=settings.JWT_REFRESH_EXPIRE_DAYS)
-            now = datetime.now(timezone.utc)
-            refresh_payload = {
-                "sub": str(user_id),
-                "token_type": "refresh",
-                "jti": str(uuid.uuid4()),
-                "exp": int(exp.timestamp()),
-                "iat": int(now.timestamp())
-            }
-            refresh_token: str = jwt.encode(refresh_payload, settings.JWT_SECRET_KEY, algorithm="HS256")
+            refresh_token = self._create_token(
+                user_id=user_id,
+                client_ip=client_ip,
+                token_type=TokenTypeEnum.REFRESH_TOKEN,
+                expire=timedelta(days=settings.JWT_REFRESH_EXPIRE_DAYS),
+            )
 
         # --- Ответ ---
         return {
@@ -61,6 +75,21 @@ class TokenService:
 
         csrf_token, signed_csrf = self.csrf_protect.generate_csrf_tokens()
         return csrf_token, signed_csrf
+
+
+    def create_email_verification_token(self, user_id: int, client_ip: str) -> str:
+        """Генерирует и возвращает токен для верификации почты."""
+
+        # --- Генерация токена ---
+        token = self._create_token(
+            user_id=user_id,
+            client_ip=client_ip,
+            token_type=TokenTypeEnum.EMAIL_TOKEN,
+            expire=timedelta(days=settings.EMAIL_SUBMIT_EXPIRE_HOURS),
+        )
+
+        # --- Ответ ---
+        return token
 
 
     async def revoke_token(self, token_payload: dict[str, str]) -> None:
