@@ -11,7 +11,5 @@ settings = get_settings()
 @run_app_typer.command()
 def start(
         reload: bool = False,
-        public: bool = False
 ):
-    host = "0.0.0.0" if public else settings.APP_HOST
-    main(reload=reload, host=host)
+    main(reload=reload)

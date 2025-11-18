@@ -42,13 +42,13 @@ fastapi-voting                          # Корневой каталог Poetry
 - Redis
 - Alembic
 - Uvicorn (ASGI)
+- reverse-proxy Nginx 1.28.0
 
 ## Установка зависимостей
 Разместить конфигурационный файл с переменными среды (.env) в ``fastapi-voting/`` - в корневом каталоге
 Содержимое .env:
 ```powershell
 # Конфигурация приложения
-APP_HOST=127.0.0.1
 APP_PORT=5000
 
 # --- EMAIL ---
@@ -74,10 +74,6 @@ CSRF_COOKIE_SAMESITE=none
 CSRF_MAX_AGE=86400
 CSRF_COOKIE_SECURE=true
 
-# Конфигурация для TLS
-TLS_PRIVATE_KEY=C:\Users\Lyric\Desktop\Work\SSL\fastapi-voting\privateKey.key
-TLS_CERTIFICATE=C:\Users\Lyric\Desktop\Work\SSL\fastapi-voting\certificate.crt
-
 # MySQL
 DB_HOST=127.0.0.1
 DB_PORT=3306
@@ -101,14 +97,30 @@ poetry config virtualenvs.in-project true
 ```commandline
 poetry install
 ```
-## Генерация сертификата.
+
+## Установка прокси-сервера для приложения
+Предварительно установив архив с Nginx (https://nginx.org/download/nginx-1.28.0.zip), следуйте к каталогу `src/fastapi_voting/nginx/`.
+
+В корне каталога `src/fastapi_voting/nginx/` создайте два подкаталога: `core/` и `SSL/fastapi-voting/`.
+Разместите в подкаталоге `core/` содержимое установленного ранее архива с Nginx
+
+В корне каталога `src/fastapi_voting/nginx/` располагается файл с именем `nginx.conf`. 
+Переместите этот файл в каталог `src/fastapi_voting/nginx/core/conf/` с заменой.
+
+
+### Генерация сертификата.
 Для корректной работы шифрования трафика по протоколу TLS требуется иметь SSL-сертификат и приватный ключ.
 
-Для генерации самоподписанного SSL-сертификата и приватного ключа - перейдите в директорию, где планируется разместить файлы, и выполните инструкцию:
+Для генерации самоподписанного SSL-сертификата и приватного ключа - перейдите в `src/fastapi_voting/nginx/SSL/fastapi-voting/`
+, и выполните инструкцию:
 ```commandline
 openssl req -x509 -sha256 -nodes -days 365 -newkey rsa:2048 -keyout privateKey.key -out certificate.crt
 ```
-В одноимённых полях файла .env укажите полные маршруты к вашим файлам сертификата и ключа.
+
+### Запуск прокси-сервера
+Для запуска Nginx-сервера перейдите в каталог `src/fastapi_voting/nginx/core/`
+и выполните инструкцию `start nginx.exe`.
+
 
 ## Shell-инструкции CLI
 Корректное исполнение инструкций оболочкой требует пребывания в корне проекта на момент применения инструкции
@@ -121,7 +133,6 @@ poetry run app start - запуск приложения.
 | Аргумент   | По умолчанию | Описание                                                                                     |
 |:-----------|:-------------|:---------------------------------------------------------------------------------------------|
 | `--reload` | `False`      | Включает режим мониторинга изменений с целью обновления процесса.                            |
-| `--public` | `127.0.0.1`  | Задаёт прослушивание всех сетевых интерфейсов (`0.0.0.0`), делая приложение доступным извне. |
 
 
 
