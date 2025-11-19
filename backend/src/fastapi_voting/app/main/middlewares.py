@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from starlette.middleware.base import BaseHTTPMiddleware
 
-from src.fastapi_voting.app.di.dependencies.logging_di import LoggingExceptionDI
+from src.fastapi_voting.app.services.subservice.logging_service import LoggingService
 
 
 # --- Конфигурация обработчиков ---
@@ -22,8 +22,8 @@ class LogRequestMiddleware(BaseHTTPMiddleware):
 
     async def dispatch(self, request: Request, call_next):
         # --- Внедрение зависимости и логирование ---
-        logger = LoggingExceptionDI("HTTP")(request=request)
-        logger.info(detail="")
+        logger = LoggingService(request=request)
+        logger.input_log()
 
         # --- Ответ ---
         response = await call_next(request)
