@@ -50,9 +50,7 @@ class AuthTokenRequired:
             )
             if self.token_type.value != payload["token_type"]:
                 raise token_exc.invalid(log_message=f"Некорректный тип токена: <{payload['token_type']}>. Ожидался <{self.token_type.value}>.")
-
-            if payload["ip"] != request.client.host: # TODO: Привязка по fingerprint
-                raise token_exc.invalid(log_message=f"IP токена <{payload['ip']}> не совпадает с IP пользователя <{request.client.host}>")
+            # TODO: Привязка по fingerprint
 
         except ExpiredSignatureError:
             raise token_exc.expired(log_message=f"Был передан просроченный {self.token_type.value}.")

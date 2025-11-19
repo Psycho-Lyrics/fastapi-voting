@@ -25,14 +25,13 @@ class TokenService:
         self.csrf_protect = csrf_protect
 
     @staticmethod
-    def _create_token(user_id: int, token_type: TokenTypeEnum, expire: timedelta, client_ip: str):
+    def _create_token(user_id: int, token_type: TokenTypeEnum, expire: timedelta):
         """Отвечает за генерацию токена указанного типа."""
 
         # --- Формирование полезной нагрузки токена ---
         exp = datetime.now(timezone.utc) + expire
         payload = {
             "sub": str(user_id),
-            "ip": client_ip,
             "jti": str(uuid.uuid4()),
             "token_type": token_type.value,
             "exp": int(exp.timestamp()),
@@ -43,13 +42,12 @@ class TokenService:
         return token
 
 
-    def create_tokens(self, user_id: int, client_ip: str, refresh: bool = False) -> dict[str, str]:
+    def create_tokens(self, user_id: int, refresh: bool = False) -> dict[str, str]:
         """Формирование JWT-токенов"""
 
         # --- Access-Token ---
         access_token = self._create_token(
             user_id=user_id,
-            client_ip=client_ip,
             token_type=TokenTypeEnum.ACCESS_TOKEN,
             expire=timedelta(minutes=settings.JWT_ACCESS_EXPIRE_MINUTES),
         )
@@ -58,7 +56,6 @@ class TokenService:
         if refresh:
             refresh_token = self._create_token(
                 user_id=user_id,
-                client_ip=client_ip,
                 token_type=TokenTypeEnum.REFRESH_TOKEN,
                 expire=timedelta(days=settings.JWT_REFRESH_EXPIRE_DAYS),
             )
@@ -75,21 +72,6 @@ class TokenService:
 
         csrf_token, signed_csrf = self.csrf_protect.generate_csrf_tokens()
         return csrf_token, signed_csrf
-
-
-    def create_email_verification_token(self, user_id: int, client_ip: str) -> str:
-        """Генерирует и возвращает токен для верификации почты."""
-
-        # --- Генерация токена ---
-        token = self._create_token(
-            user_id=user_id,
-            client_ip=client_ip,
-            token_type=TokenTypeEnum.EMAIL_TOKEN,
-            expire=timedelta(days=settings.EMAIL_SUBMIT_EXPIRE_HOURS),
-        )
-
-        # --- Ответ ---
-        return token
 
 
     async def revoke_token(self, token_payload: dict[str, str]) -> None:
