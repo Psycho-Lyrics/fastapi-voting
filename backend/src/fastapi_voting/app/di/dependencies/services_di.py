@@ -6,13 +6,13 @@ from fastapi import Depends
 
 from fastapi_csrf_protect import CsrfProtect
 
-from src.fastapi_voting.app.services.task_service import TaskService
-from src.fastapi_voting.app.services.token_service import TokenService
+from src.fastapi_voting.app.services.subservice.task_service import TaskService
+from src.fastapi_voting.app.services.subservice.token_service import TokenService
+from src.fastapi_voting.app.services.subservice.email_service import EmailService
 
 from src.fastapi_voting.app.services.voting_service import VotingService
 from src.fastapi_voting.app.services.user_service import UserService
 from src.fastapi_voting.app.services.department_service import DepartmentService
-from src.fastapi_voting.app.services.email_service import EmailService
 
 from src.fastapi_voting.app.repositories.user_repo import UserRepo
 from src.fastapi_voting.app.repositories.department_repo import DepartmentRepo
@@ -23,9 +23,7 @@ from src.fastapi_voting.app.di.dependencies.repositories_di import (
     get_department_repo,
     get_voting_repo,
 )
-from src.fastapi_voting.app.di.dependencies.databases_di import (
-    get_redis
-)
+
 from src.fastapi_voting.app.di.dependencies.email_di import get_email_service
 from src.fastapi_voting.app.di.dependencies.task_di import get_task_service
 from src.fastapi_voting.app.di.dependencies.token_di import get_token_service

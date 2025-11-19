@@ -6,7 +6,7 @@ from typing import Annotated
 
 from src.fastapi_voting.app.core.enums import TokenTypeEnum
 
-from src.fastapi_voting.app.services.token_service import TokenService
+from src.fastapi_voting.app.services.subservice.token_service import TokenService
 from src.fastapi_voting.app.services.user_service import UserService
 from src.fastapi_voting.app.services.department_service import DepartmentService
 from src.fastapi_voting.app.services.voting_service import VotingService
@@ -36,7 +36,6 @@ TokenServiceAnnotation = Annotated[TokenService, Depends(get_token_service)]
 
 AccessRequiredAnnotation = Annotated[AuthTokenRequired, Depends(AuthTokenRequired(TokenTypeEnum.ACCESS_TOKEN))]
 RefreshRequiredAnnotation = Annotated[AuthTokenRequired, Depends(AuthTokenRequired(TokenTypeEnum.REFRESH_TOKEN))]
-EmailTokenRequiredAnnotation = Annotated[AuthTokenRequired, Depends(AuthTokenRequired(TokenTypeEnum.EMAIL_TOKEN))]
 
 CSRFValidAnnotation = Annotated[csrf_valid, Depends(csrf_valid)]
 

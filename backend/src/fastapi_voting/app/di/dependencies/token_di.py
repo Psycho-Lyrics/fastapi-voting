@@ -4,7 +4,7 @@ from fastapi_csrf_protect import CsrfProtect
 
 from redis.asyncio import Redis
 
-from src.fastapi_voting.app.services.token_service import TokenService
+from src.fastapi_voting.app.services.subservice.token_service import TokenService
 
 from src.fastapi_voting.app.di.dependencies.databases_di import get_redis
 

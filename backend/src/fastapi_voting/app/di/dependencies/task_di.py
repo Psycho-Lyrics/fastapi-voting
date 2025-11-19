@@ -2,7 +2,7 @@ from fastapi import Depends
 
 from redis.asyncio import Redis
 
-from src.fastapi_voting.app.services.task_service import TaskService
+from src.fastapi_voting.app.services.subservice.task_service import TaskService
 
 from src.fastapi_voting.app.di.dependencies.databases_di import get_redis
 

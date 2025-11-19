@@ -1,4 +1,4 @@
-from src.fastapi_voting.app.services.email_service import EmailService
+from src.fastapi_voting.app.services.subservice.email_service import EmailService
 
 
 # --- Определение зависимостей для SMTP ---
