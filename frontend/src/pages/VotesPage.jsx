@@ -22,7 +22,7 @@ const VotesPage = () => {
     const [hasPrev, setHasPrev] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const [inputValue, setInputValue] = useState('');
-
+    const [isArchived, setIsArchived] = useState(false);
     const [activeTab, setActiveTab] = useState('active')
 
 
@@ -49,6 +49,11 @@ const VotesPage = () => {
 
     // Функция для смены вкладки
     const handleTabChange = (tab) => {
+        if (tab === 'archived') {
+            setIsArchived(true)
+        } else {
+            setIsArchived(false);
+        }
         setActiveTab(tab);
         setCurrentPage(1);
     };
@@ -56,6 +61,7 @@ const VotesPage = () => {
     useEffect(() => {
         const fetchVotings = async () => {
             try {
+                setLoading(true);
                 const archived = activeTab === 'archived';
 
                 // Запрос на получение всех голосований
@@ -150,7 +156,7 @@ const VotesPage = () => {
                             {!loading && !error && votings.length === 0 &&
                                 <div className="text-center text-neutral-600">Нет доступных голосований.</div>}
                             {!loading && !error && votings.map((voting) => (
-                                <VotingCard key={voting.id} voting={voting}/>
+                                <VotingCard key={voting.id} voting={voting} isArchived={isArchived}/>
                             ))}
                         </div>
                     </div>

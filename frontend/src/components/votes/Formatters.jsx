@@ -49,7 +49,7 @@ export const formatRemainingTime = (endDate) => {
 };
 
 
-export const getVotingStatusConfig = (voting) => {
+export const getVotingStatusConfig = (voting, isArchived = false) => {
   const now = new Date();
   const registrationStart = new Date(voting.registration_start);
   const votingStart = new Date(voting.voting_start);
@@ -63,6 +63,15 @@ export const getVotingStatusConfig = (voting) => {
       textColor: 'text-neutral-800',
       icon: <PiBooksLight/>,
     };
+  }
+
+  if (isArchived) {
+    return {
+      bg: 'bg-neutral-100',
+      textColor: 'text-neutral-600',
+      icon: <PiBooksLight />,
+      text: 'Архивное голосование'
+    }
   }
 
   if (now >= votingStart && now <= votingEnd) {
@@ -91,6 +100,8 @@ export const getVotingStatusConfig = (voting) => {
       icon: <PiBooksLight/>,
     };
   }
+
+
   
   // Если голосование еще не началось
   return {
@@ -177,52 +188,3 @@ export const getShortStatusText = (statusConfig) => {
   
   return shortTexts[statusConfig.text] || statusConfig.text;
 };
-
-export const getMobileStatusConfig = (voting) => {
-  const config = getVotingStatusConfig(voting);
-  return {
-    ...config,
-    text: getShortStatusText(config)
-  };
-};
-
-export const getMobileStatusConfigDetails = (voting) => {
-  const config = getVotingStatusConfigDetails(voting);
-  return {
-    ...config,
-    text: getShortStatusText(config)
-  };
-};
-
-// Функция для форматирования даты и времени в компактный формат для мобильных
-export const formatDateTimeCompact = (isoString) => {
-  if (!isoString) return 'Нет данных';
-  const date = new Date(isoString);
-  const day = String(date.getDate()).padStart(2, '0');
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const hours = String(date.getHours()).padStart(2, '0');
-  const minutes = String(date.getMinutes()).padStart(2, '0');
-  return `${day}.${month} ${hours}:${minutes}`;
-};
-
-// Функция для проверки валидности дат
-export const isValidDate = (dateString) => {
-  return dateString && !isNaN(new Date(dateString));
-};
-
-// export const getVotingStatus = (voting) => {
-//     const now = new Date();
-//     const registrationStart = new Date(voting.registration_start);
-//     const registrationEnd = new Date(voting.registration_end);
-//     const votingEnd = new Date(voting.voting_end);
-
-//     if (now >= registrationStart && now <= registrationEnd) {
-//         return 'registration';
-//     } else if (now > registrationEnd && now <= votingEnd) {
-//         return 'active';
-//     } else if (now > votingEnd) {
-//         return 'completed';
-//     }
-    
-//     return 'completed'; 
-// };
