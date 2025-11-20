@@ -10,9 +10,9 @@ from src.fastapi_voting.app.models.user import User
 
 from src.fastapi_voting.app.core.enums import RolesEnum
 
-from src.fastapi_voting.app.services.task_service import TaskService
-from src.fastapi_voting.app.services.email_service import EmailService
-from src.fastapi_voting.app.services.token_service import TokenService
+from src.fastapi_voting.app.services.subservice.task_service import TaskService
+from src.fastapi_voting.app.services.subservice.email_service import EmailService
+from src.fastapi_voting.app.services.subservice.token_service import TokenService
 
 
 class UserService:

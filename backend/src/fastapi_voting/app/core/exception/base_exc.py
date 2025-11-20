@@ -5,7 +5,7 @@ from fastapi.exceptions import HTTPException
 class AppException(HTTPException):
     """Базовый класс-исключение с поддержкой WWW-Authenticate"""
 
-    def __init__(self, log_detail: str, detail: str, status_code: int, www_error: str | None = None):
+    def __init__(self, log_detail: str, status_code: int, detail: str, www_error: str=None):
 
         # --- Свойства класса и вспомогательные данные ---
         headers = None
@@ -27,3 +27,15 @@ class AppException(HTTPException):
     @property
     def response_detail(self):
         return self.exception_detail
+
+
+# --- Базовый класс аномальных исключений ---
+class AnomalyException(AppException):
+    def __init__(self, log_detail: str, detail: str, status_code: int, extra_data: list[str], www_error: str=None):
+        super().__init__(
+            log_detail,
+            detail=detail,
+            status_code=status_code,
+            www_error=www_error,
+        )
+        self.extra_data = extra_data

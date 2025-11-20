@@ -1,6 +1,4 @@
-import json
-
-from datetime import timedelta, timezone
+from datetime import timedelta
 
 from src.fastapi_voting.app.core.settings import get_settings
 

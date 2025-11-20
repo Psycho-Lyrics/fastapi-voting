@@ -14,7 +14,6 @@ from src.fastapi_voting.app.di.annotations import (
     AccessRequiredAnnotation,
     RefreshRequiredAnnotation,
     CSRFValidAnnotation,
-    EmailTokenRequiredAnnotation
 )
 
 from src.fastapi_voting.app.schemas.user_schema import InputCreateUserSchema
@@ -50,7 +49,6 @@ async def user_register(
 # --- Авторизация пользователя ---
 @user_router.post("/login", response_model=ResponseLoginUserSchema, status_code=status.HTTP_200_OK)
 async def user_login(
-        request: Request,
         data: InputLoginUserSchema,
 
         user_service: UserServiceAnnotation,
@@ -60,13 +58,12 @@ async def user_login(
     # --- Инициализация данных ---
     remember_flag = data.model_dump()["remember_me"]
     cookie_expire = datetime.now(timezone.utc) + timedelta(days=settings.JWT_REFRESH_EXPIRE_DAYS)
-    client_ip = request.client.host
 
     # --- Работа бизнес-сервиса ---
     logined_user = await user_service.login(data)
 
     # --- Генерация токенов ---
-    tokens = token_service.create_tokens(user_id=logined_user.id, refresh=remember_flag, client_ip=client_ip)
+    tokens = token_service.create_tokens(user_id=logined_user.id, refresh=remember_flag)
     csrf_token, signed_csrf = token_service.create_csrf()
 
     # --- Формирование ответа сервера ---
@@ -192,7 +189,7 @@ async def change_user_password_init(
 
 @user_router.post("/profile/change-password-confirm", status_code=status.HTTP_200_OK)
 async def change_user_password_confirm(
-        email_token_payload: EmailTokenRequiredAnnotation,
+        email_token_payload: AccessRequiredAnnotation,
         user_service: UserServiceAnnotation,
 
         token=Query(default=None, description="JWT-токен"),
