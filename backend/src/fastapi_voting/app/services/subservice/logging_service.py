@@ -30,8 +30,9 @@ class LoggingService: # TODO: Асинхронное логирование
         # Формирование данных для логирования
         result = [
             f"{self.request.method} {self.request.url}",
-            f"Client-IP: #",
-            f"Origin-IP: {self.request.headers.get('Origin')}",
+            f"Client-IP: {self.request.headers.get('X-Real-Ip')}",
+            f"Host: {self.request.headers.get('Host')}",
+            f"Origin: {self.request.headers.get('Origin')}",
             f"Referer: {self.request.headers.get('Referer')}",
         ]
 
