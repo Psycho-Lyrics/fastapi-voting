@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from aiosmtplib import SMTP
 
 from jinja2 import Environment, PackageLoader
@@ -16,7 +18,7 @@ settings = get_settings()
 # --- Сервис ---
 class EmailService:
 
-    async def send_change_password_email(self, recipients: list, token: str | None = None):
+    async def send_change_password_email(self, recipients: list, uuid_message: UUID):
 
         # --- Первичные данные ---
         subject = "Подтверждение смены пароля."
@@ -30,12 +32,12 @@ class EmailService:
             use_tls=True
 
         ) as server:
-            message = await self._create_email_message(subject, recipients, token)
+            message = await self._create_email_message(subject, recipients, uuid_message)
             await server.send_message(message)
 
 
     @staticmethod
-    async def _create_email_message(subject: str, recipients: list, token: str | None):
+    async def _create_email_message(subject: str, recipients: list, uuid_message: UUID):
 
         # --- Рендеринг шаблона для письма ---
         environment = Environment(
@@ -44,7 +46,9 @@ class EmailService:
             enable_async=True,
             variable_start_string="{{", variable_end_string="}}"
         )
-        environment.globals["verification_token"] = token
+        environment.globals["email_uuid"] = uuid_message
+        environment.globals["frontend_ip"] = settings.FRONTEND_IP
+        environment.globals["frontend_port"] = settings.FRONTEND_PORT
         environment.globals["expire_share"] = settings.EMAIL_SUBMIT_EXPIRE_HOURS
 
         template = environment.get_template("change_password_email.html")
