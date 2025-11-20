@@ -33,14 +33,14 @@ class UserService:
         self.token_service = token_service
 
 
-    async def register(self, data: InputCreateUserSchema) -> User:
-        """Отвечает за регистрацию нового пользователя"""
+    async def init_register(self, data: InputCreateUserSchema):
+        """Отвечает за инициализацию процедуры регистрации нового пользователя. Создаёт отложенную задачу и отправляет письмо для подтверждения переданного email."""
 
-        # --- Инициализация и извлечение первичных данных ---
+        # Инициализация и извлечение первичных данных
         user_data: dict = data.model_dump()
-        user_data['role'] = RolesEnum(user_data['role'])
+        user_data['role'] = RolesEnum(user_data['role']).value
 
-        # --- Проверка на уникальность пользователя ---
+        # Проверка на уникальность пользователя
         user_by_phone: User = await self.user_repo.get_by_item(column=self.user_repo.model.phone, item=user_data["phone"])
         user_by_email: User = await self.user_repo.get_by_item(column=self.user_repo.model.email, item=user_data["email"])
 
@@ -50,11 +50,23 @@ class UserService:
         if user_by_email:
             raise UserAlreadyExist(f"Пользователь с таким адресом электронной почты <{user_data['email']}> уже существует")
 
-        # --- Регистрация пользователя ---
-        result: User = await self.user_repo.add_user(user_data)
+        # Отправка письма для подтверждения электронной почты
+        uuid = uuid4()
+        print(uuid)
+        await self.email_service.send_confirm_email(recipients=[user_data["email"]], uuid_message=uuid)
 
-        # --- Формирование ответа ---
-        return result
+        # Формирование отложенной задачи на регистрацию
+        await self.task_service.add_confirm_email_task(uuid_task=uuid, data=user_data)
+
+
+    async def confirm_register(self, uuid: UUID):
+
+        # Выполнение операции регистрации пользователя
+        user_data = await self.task_service.execute_confirm_email_task(uuid_task=uuid)
+
+        # Работа репозитория и результат
+        user = await self.user_repo.add_user(data=user_data)
+        return user
 
 
     async def login(self, data: InputLoginUserSchema) -> User:
@@ -116,6 +128,5 @@ class UserService:
         """Выполняет операцию смены пароля."""
 
         # --- Выполнение операции смены пароля ---
-
         password: str = await self.task_service.execute_change_password_task(uuid_task=uuid)
         await self.user_repo.change_password(id=user_id, password=password)
