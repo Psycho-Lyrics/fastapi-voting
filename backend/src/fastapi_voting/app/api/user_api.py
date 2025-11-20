@@ -39,13 +39,21 @@ user_router = APIRouter(
 
 
 # --- Регистрация пользователя ---
-@user_router.post("/register", response_model=UserSchema, status_code=status.HTTP_201_CREATED)
-async def user_register(
+@user_router.post("/register", status_code=status.HTTP_200_OK)
+async def user_register_init(
         data: InputCreateUserSchema,
         user_service: UserServiceAnnotation,
 ):
-    registered_user = await user_service.register(data)
-    return registered_user
+    await user_service.init_register(data)
+    return {"message": "email sent"}
+
+@user_router.post("/register-confirm/{uuid}", response_model=UserSchema, status_code=status.HTTP_201_CREATED)
+async def user_register_confirm(
+        user_service: UserServiceAnnotation,
+        uuid: UUID,
+):
+    user = await user_service.confirm_register(uuid=uuid)
+    return user
 
 
 # --- Авторизация пользователя ---
@@ -201,3 +209,5 @@ async def change_user_password_confirm(
 
     # --- Ответ ---
     return {"message": "password changed"}
+
+
