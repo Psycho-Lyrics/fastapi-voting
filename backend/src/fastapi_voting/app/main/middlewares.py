@@ -6,11 +6,16 @@ from starlette.middleware.base import BaseHTTPMiddleware
 
 from src.fastapi_voting.app.services.subservice.logging_service import LoggingService
 
+from src.fastapi_voting.app.core.settings import get_settings
+
+
+# --- Инструментарий ---
+settings = get_settings()
 
 # --- Конфигурация обработчиков ---
 origins = [
     "https://localhost:5173",
-    "https://192.168.1.105:5173",
+    f"https://{settings.FRONTEND_IP}:{settings.FRONTEND_PORT}",
 ]
 
 # --- Пользовательские обработчики ---
