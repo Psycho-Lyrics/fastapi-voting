@@ -166,7 +166,6 @@ async def change_user_credentials(
 
 
 # -- Смена пароля ---
-# TODO: Смена пароля
 @user_router.post("/profile/change-password", status_code=status.HTTP_200_OK)
 async def change_user_password_init(
         access_payload: AccessRequiredAnnotation,

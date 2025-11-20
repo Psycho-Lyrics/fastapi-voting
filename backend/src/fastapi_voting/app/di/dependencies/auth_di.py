@@ -11,7 +11,6 @@ from jose.exceptions import ExpiredSignatureError, JWTError
 from src.fastapi_voting.app.core.settings import get_settings
 from src.fastapi_voting.app.core.enums import TokenTypeEnum
 
-# from src.fastapi_voting.app.di.annotations import RedisClientAnnotation TODO: Цикличные импорты. Пересмотреть в пользу использования аннотации
 from src.fastapi_voting.app.di.dependencies.databases_di import get_redis
 
 from src.fastapi_voting.app.core.factory.token_exception_factory import TokenExceptionFactory

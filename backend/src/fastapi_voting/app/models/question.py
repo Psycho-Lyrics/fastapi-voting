@@ -17,7 +17,6 @@ class Question(Base):
 
     # --- Внешние ключи таблицы ---
     voting_id: Mapped[int] = mapped_column(ForeignKey('votings.id', ondelete='CASCADE'))
-    #template_id: Mapped[int] = mapped_column(ForeignKey('templates.id')) TODO: Описать модель Template
 
     # --- ОРМ-модели ---
 
