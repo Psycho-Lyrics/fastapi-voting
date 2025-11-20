@@ -19,6 +19,8 @@ class Settings(BaseSettings):
 
     # --- Конфигурация приложения ---
     APP_PORT: int
+    FRONTEND_IP: str
+    FRONTEND_PORT: str
 
     # --- EMAIL ---
     EMAIL_SUBMIT_EXPIRE_HOURS: int
