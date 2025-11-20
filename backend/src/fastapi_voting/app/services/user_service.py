@@ -116,6 +116,6 @@ class UserService:
         """Выполняет операцию смены пароля."""
 
         # --- Выполнение операции смены пароля ---
-        # TODO: Предупредить повторное использование тасков
+
         password: str = await self.task_service.execute_change_password_task(uuid_task=uuid)
         await self.user_repo.change_password(id=user_id, password=password)
