@@ -1,6 +1,5 @@
 import {useEffect, useState} from "react";
-import { getProfileData, updateProfileData } from '/src/services/api.js'
-import { TbCloudDownload } from "react-icons/tb";
+import {TbCloudDownload} from "react-icons/tb";
 import {InputDefault} from "../Inputs.jsx";
 import {changeCredentials} from "../../services/api/user.js";
 import toast from 'react-hot-toast';
@@ -24,12 +23,12 @@ const PersonalData = () => {
             surname: localStorage.getItem('surname') ?? '',
             email: localStorage.getItem('email') ?? '',
         };
-        setFormData(prev => ({ ...prev, ...dataFromStorage }));
+        setFormData(prev => ({...prev, ...dataFromStorage}));
     }, []);
 
     // Обработчик изменений в полях формы
     const handleChange = (e) => {
-        const { name, value } = e.target;
+        const {name, value} = e.target;
         setFormData(prevData => ({
             ...prevData,
             [name]: value,
@@ -55,12 +54,9 @@ const PersonalData = () => {
             localStorage.setItem('surname', response.data.surname);
             localStorage.setItem('email', response.data.email);
             console.log('Данные успешно сохранены!');
-            toast.success('Данные успешно сохранены!');
-            
         } catch (error) {
             console.error('Ошибка при сохранении данных:', error.message);
             toast.error("Не удалось сохранить данные.")
-            
         } finally {
             setIsSaving(false);
         }
@@ -68,13 +64,13 @@ const PersonalData = () => {
 
 
     return (
-        <form 
+        <form
             className="shadow-lg bg-white rounded-[15px] md:rounded-[20px] xl:w-[473px]"
             onSubmit={handleSubmit}
         >
             <div className="p-4 md:p-[32px] space-y-4 md:space-y-[20px]">
                 <h1 className="text-neutral-800 text-xl md:text-2xl font-semibold">Персональные данные</h1>
-                
+
                 {/* Фамилия */}
                 <InputDefault
                     type="text"
@@ -115,6 +111,28 @@ const PersonalData = () => {
                 <BlueButton onClick={handleSubmit} disabled={isSaving}>
                     {isSaving ? (
                         <>
+                            <svg className="h-5 w-5 animate-spin" viewBox="0 0 24 24">
+                                <circle
+                                    fill="none"
+                                    strokeWidth="3"
+                                    className="stroke-current opacity-40"
+                                    cx="12"
+                                    cy="12"
+                                    r="10"
+                                />
+                                <circle
+                                    cx="12"
+                                    cy="12"
+                                    r="10"
+                                    stroke="currentColor"
+                                    strokeWidth="3"
+                                    strokeLinecap="round"
+                                    strokeDasharray="50.265"
+                                    strokeDashoffset="36"      /* длина видимой дуги */
+                                    className="opacity-95"
+                                    fill="none"
+                                />
+                            </svg>
                             Сохранение...
                         </>
                     ) : (

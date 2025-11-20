@@ -6,9 +6,11 @@ import { TbTimezone } from "react-icons/tb";
 import { LuCalendar1, LuAlarmClock, LuTrash2 } from "react-icons/lu";
 import { IoMdStats } from "react-icons/io";
 import {deleteVoting} from "../../services/api/voting.js";
+import toast from "react-hot-toast";
 
-const VotingCard = ({ voting }) => {
-    const status = getVotingStatusConfig(voting);
+const VotingCard = ({ voting, isArchived }) => {
+    const status = getVotingStatusConfig(voting, isArchived);
+    const [isDeleted, setIsDeleted] = useState(false);
 
 
     const [isModalOpen, setIsModalOpen] = useState(false)
@@ -21,9 +23,12 @@ const VotingCard = ({ voting }) => {
     const handleDelete = async () => {
         try {
             await deleteVoting(voting.id);
+            toast.success('Голосование удалено');
             handleCloseModal();
+            setIsDeleted(true);
         } catch (error) {
             console.log(error)
+            toast.error('Не удалось удалить голосование')
         }
     }
 
@@ -57,7 +62,7 @@ const VotingCard = ({ voting }) => {
                     </div>
                 </div>
 
-                <div className="flex flex-col sm:flex-row gap-4 sm:gap-8 w-160">
+                <div className="flex flex-col sm:flex-row gap-4 sm:gap-8 w-130">
                     {/* Даты регистрации */}
                     <div className="flex flex-col gap-3 sm:gap-4 flex-1">
                         <div className="flex flex-col gap-1 sm:gap-2">
@@ -129,6 +134,10 @@ const VotingCard = ({ voting }) => {
                     message={`Вы уверены, что хотите удалить голосование "${voting.title}"?`}
                 />
             </div>
+            {isDeleted && (
+                <div className="absolute inset-0 bg-gray-500/40 rounded-[15px] z-30">
+                </div>
+            )}
         </div>
     );
 };

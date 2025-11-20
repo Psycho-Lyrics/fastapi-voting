@@ -23,6 +23,7 @@ function AppContent() {
                 <Route path='/register' element={<RegisterPage/>}/>
                 <Route path='/' element={<MainPage/>}/>
                 <Route path='/profile' element={<ProfilePage/>}/>
+                <Route path='/profile/:token' element={<ProfilePage/>}/>
                 <Route path='/constructor' element={<ConstructorPage/>}/>
                 <Route path='/details' element={<Details/>}/>
                 <Route path='/votes/:votingId' element={<Details/>}/>
