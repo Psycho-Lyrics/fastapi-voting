@@ -1,5 +1,7 @@
 import logging
 
+from uuid import UUID
+
 from datetime import datetime, timedelta, timezone
 
 from fastapi import APIRouter, status, Header, Request, Query
@@ -167,8 +169,6 @@ async def change_user_credentials(
 # TODO: Смена пароля
 @user_router.post("/profile/change-password", status_code=status.HTTP_200_OK)
 async def change_user_password_init(
-        request: Request,
-
         access_payload: AccessRequiredAnnotation,
         data: InputChangePasswordSchema,
 
@@ -179,26 +179,26 @@ async def change_user_password_init(
     # --- Первичные данные ---
     data = data.model_dump()
     user_id = access_payload["sub"]
-    client_ip = request.client.host
 
     # --- Работа сервиса ---
-    await user_service.init_change_password(data, user_id, client_ip)
+    await user_service.init_change_password(data, user_id)
 
     return {"message": "email message sent"}
 
 
-@user_router.post("/profile/change-password-confirm", status_code=status.HTTP_200_OK)
+@user_router.post("/profile/change-password-confirm/{uuid}", status_code=status.HTTP_200_OK)
 async def change_user_password_confirm(
-        email_token_payload: AccessRequiredAnnotation,
+        access_token_payload: AccessRequiredAnnotation,
         user_service: UserServiceAnnotation,
 
-        token=Query(default=None, description="JWT-токен"),
+        uuid: UUID,
+        token=Header(default=None, description="JWT-токен"),
 ):
     # --- Данные запроса ---
-    user_id = email_token_payload["sub"]
+    user_id = access_token_payload["sub"]
 
     # --- Работа сервиса ---
-    await user_service.confirm_change_password(user_id)
+    await user_service.confirm_change_password(user_id=user_id, uuid=uuid)
 
     # --- Ответ ---
     return {"message": "password changed"}
