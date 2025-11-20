@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Подтверждение электронной почты</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f5f5f5;">
+  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #f5f5f5;">
+    <tr>
+      <td align="center" style="padding: 30px 10px;">
+        <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; background-color: #212121; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
+          <tr>
+            <td align="center" style="padding: 30px 20px; border-bottom: 1px solid #2d2d2d;">
+              <h1 style="color: #ffffff; margin: 0; font-size: 24px; letter-spacing: 0.5px; font-weight: 500;">
+                Подтверждение электронной почты
+              </h1>
+            </td>
+          </tr>
+
+          <tr>
+            <td style="padding: 30px 20px; color: #212121; font-size: 16px; line-height: 1.6; background-color: #ffffff;">
+              <p style="margin: 0 0 20px;">Здравствуйте!</p>
+              <p style="margin: 0 0 20px;">
+                Вы зарегистрировались в системе <strong>КРИПТОГОЛОСОВАНИЕ</strong>.<br>
+                Для завершения регистрации необходимо подтвердить ваш адрес электронной почты.<br>
+              </p>
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                <tr>
+                  <td align="center" style="padding: 20px 0;">
+                    <a href="https://{{frontend_ip}}:{{frontend_port}}/confirm/{{email_uuid}}"
+                       style="display: inline-block; padding: 12px 30px; background-color: #212121; color: #ffffff; text-decoration: none; border: 1px solid #212121; border-radius: 4px; font-weight: 500; font-size: 16px; letter-spacing: 0.5px;">
+                      Подтвердить почту
+                    </a>
+                  </td>
+                </tr>
+              </table>
+              <p style="margin: 0; font-size: 14px; color: #212121;">
+                Срок действия ссылки — {{expire_share}} час(а).
+              </p>
+            </td>
+          </tr>
+
+          <tr>
+            <td align="center" style="padding: 20px; background-color: #212121; color: #777777; font-size: 12px; border-top: 1px solid #2d2d2d;">
+              <p style="margin: 0; letter-spacing: 0.5px;">
+                © 2025 КРИПТОГОЛОСОВАНИЕ. Все права защищены.
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
