@@ -3,7 +3,7 @@ from redis.asyncio import Redis
 from fastapi import Request, Depends
 
 from fastapi_csrf_protect import CsrfProtect
-from fastapi_csrf_protect.exceptions import TokenValidationError
+from fastapi_csrf_protect.exceptions import TokenValidationError, MissingTokenError, InvalidHeaderError
 
 from jose import jwt
 from jose.exceptions import ExpiredSignatureError, JWTError
@@ -102,6 +102,12 @@ async def csrf_valid(
         )
     except TokenValidationError:
         raise token_exc.invalid(log_message="Сигнатура CSRF-токена была нарушена")
+
+    except MissingTokenError:
+        raise token_exc.invalid(log_message=f"В Cookie отсутствует CSRF-токен.")
+
+    except InvalidHeaderError:
+        raise token_exc.invalid(log_message=f"В заголовках запроса не был указан CSRF-токен.")
 
     return True
 
