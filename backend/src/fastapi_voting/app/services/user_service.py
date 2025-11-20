@@ -1,3 +1,5 @@
+from uuid import uuid4, UUID
+
 from src.fastapi_voting.app.core.exception.simple_exc import UserNotFound, UserAlreadyExist, InvalidLogin
 
 from src.fastapi_voting.app.repositories.user_repo import UserRepo
@@ -39,7 +41,7 @@ class UserService:
         user_data['role'] = RolesEnum(user_data['role'])
 
         # --- Проверка на уникальность пользователя ---
-        user_by_phone: User = await self.user_repo.get_by_item(column=self.user_repo.model.phone, item=user_data["phone"]) # TODO: Оптимизировать
+        user_by_phone: User = await self.user_repo.get_by_item(column=self.user_repo.model.phone, item=user_data["phone"])
         user_by_email: User = await self.user_repo.get_by_item(column=self.user_repo.model.email, item=user_data["email"])
 
         if user_by_phone:
@@ -89,7 +91,7 @@ class UserService:
         return user
 
 
-    async def init_change_password(self, data: dict, user_id: int, client_ip: str):
+    async def init_change_password(self, data: dict, user_id: int):
         """Отвечает за смену пароля пользователя."""
 
         # --- Проверка на существование пользователя ---
@@ -100,23 +102,20 @@ class UserService:
         # --- Верификация пароля ---
         pass_is_valid: bool = user.verify_password(password=data["old_password"])
         if not pass_is_valid:
-            raise InvalidLogin(log_message=f"Указан неверный пароль <{data['old_password']}> для пользователя с ID <{user_id}>.")
+            raise InvalidLogin(log_message=f"Указан неверный пароль для пользователя с ID <{user_id}>.")
 
         # --- Отправка письма для подтверждения операции ---
-        # email_verification_token = self.token_service.create_email_verification_token(user_id, client_ip)
-        #
-        # await self.email_service.send_change_password_email( TODO: Пересмотреть механизм подтверждения почты
-        #     token=email_verification_token,
-        #     recipients=[user.email])
+        task_uuid = uuid4()
+        await self.email_service.send_change_password_email(recipients=[user.email], uuid_message=task_uuid)
 
         # --- Формирование отложенной операции ---
-        await self.task_service.add_change_password_task(user_id, data["new_password"])
+        await self.task_service.add_change_password_task(task_uuid, data["new_password"])
 
 
-    async def confirm_change_password(self, user_id: int):
+    async def confirm_change_password(self, user_id: int, uuid: UUID):
         """Выполняет операцию смены пароля."""
 
         # --- Выполнение операции смены пароля ---
         # TODO: Предупредить повторное использование тасков
-        password: str = await self.task_service.execute_change_password_task(user_id)
+        password: str = await self.task_service.execute_change_password_task(uuid_task=uuid)
         await self.user_repo.change_password(id=user_id, password=password)
