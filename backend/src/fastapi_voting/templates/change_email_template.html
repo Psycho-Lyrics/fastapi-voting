@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Подтверждение смены email</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f5f5f5; -webkit-font-smoothing: antialiased;">
+  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #f5f5f5;">
+    <tr>
+      <td align="center" style="padding: 40px 15px;">
+        <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; background-color: #1a1a1a; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.15);">
+          <tr>
+            <td align="center" style="padding: 35px 30px 25px; background: radial-gradient(circle at bottom right, rgba(255,255,255,0.12), transparent 65%), linear-gradient(135deg, #1a1a1a, #2c2c2c);">
+              <h1 style="color: #ffffff; margin: 0 0 8px 0; font-size: 24px; font-weight: 600; letter-spacing: 0.3px;">
+                Подтвердите новый адрес почты
+              </h1>
+              <p style="color: #e8e8e8; margin: 0; font-size: 15px; font-weight: 400;">
+                КРИПТОГОЛОСОВАНИЕ
+              </p>
+            </td>
+          </tr>
+
+          <tr>
+            <td style="padding: 40px 35px; color: #f0f0f0; font-size: 16px; line-height: 1.7; background-color: #1a1a1a;">
+              <p style="margin: 0 0 20px;">Здравствуйте!</p>
+              <p style="margin: 0 0 25px;">
+                Вы запросили <strong style="color: #ffffff;">смену адреса электронной почты</strong> в системе «КРИПТОГОЛОСОВАНИЕ».
+                Для завершения операции необходимо подтвердить новый адрес.
+              </p>
+
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+                <tr>
+                  <td align="center" style="padding: 25px 0 30px;">
+                    <a href="https://{{frontend_ip}}:{{frontend_port}}/profile/email/{{email_uuid}}" target="_blank" style="display: inline-block; padding: 15px 42px; background-color: #2d2d2d; color: #ffffff; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 16px; letter-spacing: 0.3px; border: 1px solid #404040; transition: all 0.2s ease;">
+                      Подтвердить новый email
+                    </a>
+                  </td>
+                </tr>
+              </table>
+
+              <p style="margin: 0 0 25px; font-size: 15px; color: #e8e8e8;">
+                После подтверждения ваш новый адрес будет привязан к учётной записи,
+                и все уведомления будут приходить на него.
+              </p>
+
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #242424; border: 1px solid #3a3a3a; border-radius: 6px;">
+                <tr>
+                  <td style="padding: 20px;">
+                    <p style="margin: 0 0 12px; font-size: 14px; color: #e8e8e8; line-height: 1.5;">
+                      <strong style="color: #ffffff;">Если вы не запрашивали смену почты</strong> — просто проигнорируйте это письмо.
+                    </p>
+                    <p style="margin: 0; font-size: 14px; color: #e8e8e8; line-height: 1.5;">
+                      Срок действия ссылки — <strong style="color: #ffffff;">{{expire_share}} час(а)</strong>.
+                    </p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <tr>
+            <td align="center" style="padding: 25px 30px; background-color: #1a1a1a; color: #b0b0b0; font-size: 13px; border-top: 1px solid #3a3a3a;">
+              <p style="margin: 0 0 8px; letter-spacing: 0.3px;">
+                © 2025 КРИПТОГОЛОСОВАНИЕ. Все права защищены.
+              </p>
+              <p style="margin: 0; font-size: 12px; color: #888888;">
+                Безопасное криптографическое голосование
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

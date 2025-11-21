@@ -21,16 +21,22 @@ settings = get_settings()
 class EmailService:
     """Сервис для работы с почтой. Рендеринг писем, создание и управление подключением к SMTP-серверам и отправка писем - юрисдикция этого сервиса."""
 
-    async def send_change_password_email(self, recipients: list, uuid_message: UUID):
+    async def send_change_password_message(self, recipients: list, uuid_message: UUID):
         subject = "Подтверждение смены пароля."
         async with self.smtp_context as smtp:
             msg = await self._create_email_message(subject, recipients, TemplateTypeEnum.CHANGE_PASSWORD, uuid_message)
             await smtp.send_message(msg)
 
-    async def send_confirm_register_email(self, recipients: list, uuid_message: UUID):
+    async def send_confirm_register_message(self, recipients: list, uuid_message: UUID):
         subject = "Подтверждение электронной почты для регистрации."
         async with self.smtp_context as smtp:
             msg = await self._create_email_message(subject, recipients, TemplateTypeEnum.CONFIRM_REGISTER, uuid_message)
+            await smtp.send_message(msg)
+
+    async def send_change_email_message(self, recipients: list, uuid_message: UUID):
+        subject = "Подтверждение смены электронной почты."
+        async with self.smtp_context as smtp:
+            msg = await self._create_email_message(subject, recipients, TemplateTypeEnum.CHANGE_EMAIL, uuid_message)
             await smtp.send_message(msg)
 
 
