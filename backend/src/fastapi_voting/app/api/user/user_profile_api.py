@@ -12,8 +12,10 @@ from src.fastapi_voting.app.di.annotations import (
 from src.fastapi_voting.app.schemas.user_schema import (
     UserSchema,
     InputChangeCredentialsSchema,
-    InputChangePasswordSchema
+    InputChangePasswordSchema,
+    InputChangeEmailSchema,
 )
+
 
 # --- Инструментарий и обработчик ---
 settings = get_settings()
@@ -80,3 +82,28 @@ async def change_user_password_confirm(
     return {"message": "password changed"}
 
 
+# Смена электронной почты
+@user_profile_router.post("/change-email", status_code=status.HTTP_200_OK)
+async def change_user_email_init(
+        access_payload: AccessRequiredAnnotation,
+        user_service: UserServiceAnnotation,
+
+        data: InputChangeEmailSchema,
+
+        access_token = Header(default=None, description="JWT-токен"),
+):
+    await user_service.init_change_email(user_id=access_payload['sub'], data=data)
+    return {"message": "email message sent"}
+
+
+@user_profile_router.post("/change-email-confirm/{uuid}", status_code=status.HTTP_200_OK)
+async def change_user_email_init(
+        access_payload: AccessRequiredAnnotation,
+        user_service: UserServiceAnnotation,
+
+        uuid: UUID,
+
+        access_token = Header(default=None, description="JWT-токен"),
+):
+    await user_service.confirm_change_email(user_id=access_payload['sub'], uuid=uuid)
+    return {"message": "email changed"}

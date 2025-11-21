@@ -59,3 +59,7 @@ class InputChangePasswordSchema(BaseModel):
     new_password: str
 
 
+# --- Схемы для замены электронной почты пользователя ---
+class InputChangeEmailSchema(BaseModel):
+    email: str
+    password: str
