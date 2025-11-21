@@ -4,7 +4,9 @@ from logging import getLogger
 from src.fastapi_voting.app.main.middlewares import setup_middlewares
 from src.fastapi_voting.app.main.handlers import setup_handlers
 
-from src.fastapi_voting.app.api.user_api import user_router
+from src.fastapi_voting.app.api.user.user_auth_api import user_auth_router
+from src.fastapi_voting.app.api.user.user_profile_api import user_profile_router
+
 from src.fastapi_voting.app.api.department_api import department_router
 from src.fastapi_voting.app.api.voting_api import voting_router
 
@@ -29,6 +31,8 @@ setup_handlers(fastapi_app)
 v1_url_prefix = '/api/v1'
 
 # --- Регистрация обработчиков маршрутов ---
-fastapi_app.include_router(router=user_router, prefix=v1_url_prefix)
+fastapi_app.include_router(router=user_auth_router, prefix=v1_url_prefix)
+fastapi_app.include_router(router=user_profile_router, prefix=v1_url_prefix)
+
 fastapi_app.include_router(router=department_router, prefix=v1_url_prefix)
 fastapi_app.include_router(router=voting_router, prefix=v1_url_prefix)
