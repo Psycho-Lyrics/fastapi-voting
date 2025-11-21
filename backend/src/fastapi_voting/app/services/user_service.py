@@ -6,7 +6,8 @@ from src.fastapi_voting.app.repositories.user_repo import UserRepo
 
 from src.fastapi_voting.app.schemas.user_schema import (
     InputCreateUserSchema, InputLoginUserSchema,
-    InputChangeCredentialsSchema
+    InputChangeCredentialsSchema,
+    InputChangeEmailSchema
 )
 
 from src.fastapi_voting.app.models.user import User
@@ -53,7 +54,7 @@ class UserService:
 
         # Отправка письма для подтверждения электронной почты
         uuid = uuid4()
-        await self.email_service.send_confirm_register_email(recipients=[user_data["email"]], uuid_message=uuid)
+        await self.email_service.send_confirm_register_message(recipients=[user_data["email"]], uuid_message=uuid)
 
         # Формирование отложенной задачи на регистрацию
         await self.task_service.add_confirm_register_task(uuid_task=uuid, data=user_data)
@@ -121,7 +122,7 @@ class UserService:
 
         # --- Отправка письма для подтверждения операции ---
         task_uuid = uuid4()
-        await self.email_service.send_change_password_email(recipients=[user.email], uuid_message=task_uuid)
+        await self.email_service.send_change_password_message(recipients=[user.email], uuid_message=task_uuid)
 
         # --- Формирование отложенной операции ---
         await self.task_service.add_change_password_task(task_uuid, data["new_password"])
@@ -133,3 +134,40 @@ class UserService:
         # --- Выполнение операции смены пароля ---
         password: str = await self.task_service.execute_change_password_task(uuid_task=uuid)
         await self.user_repo.change_password(id=user_id, password=password)
+
+
+    async def init_change_email(self, user_id: int, data: InputChangeEmailSchema):
+        """Создаёт отложенную задачу на смену адреса электронной почты."""
+
+        # Первичные данные
+        data = data.model_dump()
+
+        # Проверка на существование пользователя
+        user: User = await self.user_repo.get_by_id(id=user_id)
+        if not user:
+            raise UserNotFound(log_message=f"Пользователь с ID: {user_id} не найден.") # TODO: Аномалия. Пересмотреть архитектуру логирования
+
+        # Проверка на существование пользователя с такой почтой
+        user_exists: bool = await self.user_repo.exist_by_item(column=self.user_repo.model.email, item=data["email"])
+        if user_exists:
+            raise UserAlreadyExist(log_message=f"Пользователь с электронной почтой <{data['email']}> уже существует.>")
+
+        # Верификация пароля
+        password_is_valid: bool = user.verify_password(password=data["password"])
+        if not password_is_valid:
+            raise InvalidLogin(log_message=f"Указан неверный пароль для пользователя с ID <{user_id}>.")
+
+
+        # Отправка письма для подтверждения операции
+        task_uuid = uuid4()
+        await self.email_service.send_change_email_message(recipients=[data["email"]], uuid_message=task_uuid)
+
+        # Формирование отложенной операции
+        await self.task_service.add_change_email_task(task_uuid, data["email"])
+
+
+    async def confirm_change_email(self, user_id: int, uuid: UUID):
+        """Выполняет операцию смены адреса электронной почты."""
+
+        email = await self.task_service.execute_change_email_task(uuid_task=uuid)
+        await self.user_repo.change_email(id=user_id, email=email)
