@@ -41,6 +41,15 @@ class TaskService:
             value=json.dumps(data)
         )
 
+    async def add_change_email_task(self, uuid_task: UUID, new_email: str):
+        """Создаёт отложенный запрос на смену электронной почты пользователя."""
+
+        await self.redis.setex(
+            name=f"pending-change-email:{uuid_task}",
+            time=timedelta(hours=settings.EMAIL_SUBMIT_EXPIRE_HOURS),
+            value=new_email
+        )
+
 
     # --- Исполнение задач ---
     async def execute_confirm_register_task(self, uuid_task: UUID):
@@ -66,3 +75,15 @@ class TaskService:
 
         # Ответ
         return password.decode("utf-8")
+
+
+    async def execute_change_email_task(self, uuid_task: UUID):
+        """Извлекает данные отложенного запроса на смену пароля и удаляет запись"""
+
+        # Чтение почты и удаление записи
+        email = await self.redis.getdel(name=f"pending-change-email:{uuid_task}")
+        if email is None:
+            raise TaskNotFound(log_message=f"Задачи на замену пароля с UUID: <{uuid_task}> не существует.")
+
+        # Ответ
+        return email.decode("utf-8")
