@@ -34,6 +34,12 @@ class Base:
         return result.scalar()
 
 
+    async def exist_by_item(self, column, item) -> bool:
+        query = select(exists()).where(column == item)
+        result = await self.session.execute(query)
+        return result.scalar()
+
+
     async def get_all(self):
         query = select(self.model)
         result = await self.session.execute(query)
