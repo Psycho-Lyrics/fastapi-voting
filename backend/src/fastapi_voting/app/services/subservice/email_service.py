@@ -27,10 +27,10 @@ class EmailService:
             msg = await self._create_email_message(subject, recipients, TemplateTypeEnum.CHANGE_PASSWORD, uuid_message)
             await smtp.send_message(msg)
 
-    async def send_confirm_email(self, recipients: list, uuid_message: UUID):
-        subject = "Подтверждение электронной почты."
+    async def send_confirm_register_email(self, recipients: list, uuid_message: UUID):
+        subject = "Подтверждение электронной почты для регистрации."
         async with self.smtp_context as smtp:
-            msg = await self._create_email_message(subject, recipients, TemplateTypeEnum.CONFIRM_EMAIL, uuid_message)
+            msg = await self._create_email_message(subject, recipients, TemplateTypeEnum.CONFIRM_REGISTER, uuid_message)
             await smtp.send_message(msg)
 
 

@@ -32,22 +32,22 @@ class TaskService:
             value=new_password
         )
 
-    async def add_confirm_email_task(self, uuid_task: UUID, data: dict):
+    async def add_confirm_register_task(self, uuid_task: UUID, data: dict):
         """Создаёт отложенный запрос на регистрацию пользователя."""
 
         await self.redis.setex(
-            name=f"pending-email:{uuid_task}",
+            name=f"pending-register:{uuid_task}",
             time=timedelta(hours=settings.EMAIL_SUBMIT_EXPIRE_HOURS),
             value=json.dumps(data)
         )
 
 
     # --- Исполнение задач ---
-    async def execute_confirm_email_task(self, uuid_task: UUID):
+    async def execute_confirm_register_task(self, uuid_task: UUID):
         """Извлекает данные отложенного запрос для регистрации пользователя и удаляет запись."""
 
         # Чтение и удаление данных
-        user_data = await self.redis.getdel(name=f"pending-email:{uuid_task}")
+        user_data = await self.redis.getdel(name=f"pending-register:{uuid_task}")
         if user_data is None:
             raise TaskNotFound(log_message=f"Задачи на подтверждение электронной почты для регистрации с ID <{uuid_task}> не существует.")
 

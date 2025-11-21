@@ -52,17 +52,16 @@ class UserService:
 
         # Отправка письма для подтверждения электронной почты
         uuid = uuid4()
-        print(uuid)
-        await self.email_service.send_confirm_email(recipients=[user_data["email"]], uuid_message=uuid)
+        await self.email_service.send_confirm_register_email(recipients=[user_data["email"]], uuid_message=uuid)
 
         # Формирование отложенной задачи на регистрацию
-        await self.task_service.add_confirm_email_task(uuid_task=uuid, data=user_data)
+        await self.task_service.add_confirm_register_task(uuid_task=uuid, data=user_data)
 
 
     async def confirm_register(self, uuid: UUID):
 
         # Выполнение операции регистрации пользователя
-        user_data = await self.task_service.execute_confirm_email_task(uuid_task=uuid)
+        user_data = await self.task_service.execute_confirm_register_task(uuid_task=uuid)
 
         # Работа репозитория и результат
         user = await self.user_repo.add_user(data=user_data)
