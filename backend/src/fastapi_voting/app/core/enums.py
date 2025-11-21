@@ -24,4 +24,4 @@ class TokenTypeEnum(Enum):
 # --- Шаблоны писем ---
 class TemplateTypeEnum(Enum):
     CHANGE_PASSWORD = "change_password_template.html"
-    CONFIRM_EMAIL = "confirm_email_template.html"
+    CONFIRM_REGISTER = "confirm_register_template.html"
