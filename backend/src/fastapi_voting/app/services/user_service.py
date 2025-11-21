@@ -6,6 +6,7 @@ from src.fastapi_voting.app.repositories.user_repo import UserRepo
 
 from src.fastapi_voting.app.schemas.user_schema import (
     InputCreateUserSchema, InputLoginUserSchema,
+    InputChangeCredentialsSchema
 )
 
 from src.fastapi_voting.app.models.user import User
@@ -87,18 +88,21 @@ class UserService:
         return user_by_email
 
 
-    async def change_credentials(self, data: dict, user_id: int) -> User:
+    async def change_credentials(self, data: InputChangeCredentialsSchema, user_id: int) -> User:
         """Отвечает за смену учётных данных пользователя, исключая пароль."""
 
-        # --- Проверка на существование пользователя ---
+        # Первичные данные
+        data = data.model_dump()
+
+        # Проверка на существование пользователя
         user_exist: bool = await self.user_repo.exist_by_id(id=user_id)
         if not user_exist:
             raise UserNotFound(log_message=f"Пользователь с ID: {user_id} не найден.")
 
-        # --- Работа репозитория ---
+        # Работа репозитория
         user = await self.user_repo.change_credentials(data=data, id=user_id)
 
-        # --- Результат ---
+        # Результат
         return user
 
 

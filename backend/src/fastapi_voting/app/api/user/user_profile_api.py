@@ -34,11 +34,8 @@ async def change_user_credentials(
 
         access_token = Header(default=None, description="JWT-Токен"),
 ):
-    # Работа со входными данными запроса
-    data = data.model_dump()
+    # Работа со входными данными запроса и работа сервиса
     user_id = access_payload["sub"]
-
-    # Работа сервиса
     user = await user_service.change_credentials(data, user_id)
 
     # Ответ
@@ -81,3 +78,5 @@ async def change_user_password_confirm(
 
     # Ответ
     return {"message": "password changed"}
+
+
