@@ -15,7 +15,7 @@ from src.fastapi_voting.app.schemas.voting_schema import (
 # --- Конфигурация роутера ---
 voting_router = APIRouter(
     prefix="/voting",
-    tags=["voting"],
+    tags=["Голосования"],
 )
 
 # --- Обработчики ---

@@ -7,8 +7,8 @@ from src.fastapi_voting.app.main.handlers import setup_handlers
 from src.fastapi_voting.app.api.user.user_auth_api import user_auth_router
 from src.fastapi_voting.app.api.user.user_profile_api import user_profile_router
 
-from src.fastapi_voting.app.api.department_api import department_router
-from src.fastapi_voting.app.api.voting_api import voting_router
+from src.fastapi_voting.app.api.department.department_api import department_router
+from src.fastapi_voting.app.api.voting.voting_api import voting_router
 
 
 # --- Создание логера и приложения FastApi ---

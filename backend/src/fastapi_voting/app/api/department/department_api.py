@@ -2,7 +2,6 @@ from fastapi import APIRouter
 
 from src.fastapi_voting.app.di.annotations import (
     DepartmentServiceAnnotation,
-    CSRFValidAnnotation,
     AccessRequiredAnnotation
 )
 
@@ -12,7 +11,7 @@ from src.fastapi_voting.app.schemas.department_schema import ResponseAllDepartme
 # --- Конфигурация роутера ---
 department_router = APIRouter(
     prefix="/department",
-    tags=["department"],
+    tags=["Отделы"],
 )
 
 # --- Обработчики ---
