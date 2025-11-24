@@ -4,6 +4,8 @@ from fastapi import Depends
 
 from typing import Annotated
 
+from src.fastapi_voting.app.core.settings import get_settings
+
 from src.fastapi_voting.app.core.enums import TokenTypeEnum
 
 from src.fastapi_voting.app.services.subservice.token_service import TokenService
@@ -25,6 +27,12 @@ from src.fastapi_voting.app.di.dependencies.databases_di import (
     get_redis
 )
 
+from src.fastapi_voting.app.di.dependencies.rate_limit_di import ApiLimiterDI
+
+
+# --- Инструментарий ---
+settings = get_settings()
+
 
 # --- Аннотации для сервисов---
 UserServiceAnnotation = Annotated[UserService, Depends(get_user_service)]
@@ -42,3 +50,5 @@ CSRFValidAnnotation = Annotated[csrf_valid, Depends(csrf_valid)]
 # --- Аннотации для Redis ---
 RedisClientAnnotation = Annotated[Redis, Depends(get_redis)]
 
+# --- Аннотации для ApiLimiter ---
+EmailRequestLimitAnnotation = Annotated[ApiLimiterDI, Depends(ApiLimiterDI(**{"times": 1, "minutes": settings.EMAIL_REQUEST_LIMIT_MINUTES}))]
