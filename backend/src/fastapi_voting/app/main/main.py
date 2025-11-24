@@ -1,5 +1,6 @@
 from fastapi import FastAPI
-from logging import getLogger
+
+from src.fastapi_voting.app.core.settings import get_settings
 
 from src.fastapi_voting.app.main.middlewares import setup_middlewares
 from src.fastapi_voting.app.main.handlers import setup_handlers
@@ -11,10 +12,11 @@ from src.fastapi_voting.app.api.department.department_api import department_rout
 from src.fastapi_voting.app.api.voting.voting_api import voting_router
 
 
-# --- Создание логера и приложения FastApi ---
-logger = getLogger('fastapi-voting')
+# --- Инструментарий ---
+settings = get_settings()
 
-# ---Инициализация приложения ---
+
+# --- Инициализация приложения ---
 fastapi_app = FastAPI(
     title='FastAPI-Voting',
     version='1.0',

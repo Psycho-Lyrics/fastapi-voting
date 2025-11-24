@@ -24,6 +24,7 @@ class Settings(BaseSettings):
 
     # --- EMAIL ---
     EMAIL_SUBMIT_EXPIRE_HOURS: int
+    EMAIL_REQUEST_LIMIT_MINUTES: int
 
     # --- SMTP ---
     SMTP_HOSTNAME: str
