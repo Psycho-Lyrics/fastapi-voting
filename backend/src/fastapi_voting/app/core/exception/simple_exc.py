@@ -1,6 +1,6 @@
 from fastapi import status
 
-from src.fastapi_voting.app.core.exception.base_exc import AppException
+from src.fastapi_voting.app.core.exception.base_exc import AppException, AnomalyException
 
 
 # --- Исключения для пользователей ---
@@ -33,3 +33,7 @@ class TaskNotFound(AppException):
         super().__init__(log_detail=log_message, detail="Invalid Data", status_code=status.HTTP_404_NOT_FOUND)
 
 
+# --- Исключения для ограничения запросов ---
+class TooManyRequests(AnomalyException):
+    def __init__(self, log_message: str, extra_data: list[str]):
+        super().__init__(log_detail=log_message, detail="Too Many Requests", status_code=status.HTTP_404_NOT_FOUND, extra_data=extra_data)
