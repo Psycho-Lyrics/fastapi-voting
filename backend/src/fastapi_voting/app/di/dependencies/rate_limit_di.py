@@ -15,7 +15,7 @@ from src.fastapi_voting.app.core.settings import get_settings
 settings = get_settings()
 
 # --- Зависимость для ограничения запросов ---
-class ApiLimiterDI:
+class ApiLimiterDI: # TODO: Реализована модель фиксированного окна. В будущем рассмотреть реализацию более сложных моделей.
 
     def __init__(self, times: int, minutes: int):
         self.times = times
