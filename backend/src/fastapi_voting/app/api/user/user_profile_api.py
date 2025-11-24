@@ -1,6 +1,6 @@
 from uuid import UUID
 
-from fastapi import APIRouter, status, Header
+from fastapi import APIRouter, status, Header, Depends
 
 from src.fastapi_voting.app.core.settings import get_settings
 
@@ -8,9 +8,12 @@ from src.fastapi_voting.app.di.annotations import (
     UserServiceAnnotation,
 
     AccessRequiredAnnotation,
+
+    EmailRequestLimitAnnotation
 )
 from src.fastapi_voting.app.schemas.user_schema import (
     UserSchema,
+    OutputSentEmailSchema,
     InputChangeCredentialsSchema,
     InputChangePasswordSchema,
     InputChangeEmailSchema,
@@ -45,8 +48,10 @@ async def change_user_credentials(
 
 
 # -- Смена пароля ---
-@user_profile_router.post("/change-password", status_code=status.HTTP_200_OK)
+@user_profile_router.post("/change-password", response_model=OutputSentEmailSchema, status_code=status.HTTP_200_OK)
 async def change_user_password_init(
+        rate_minutes: EmailRequestLimitAnnotation,
+
         access_payload: AccessRequiredAnnotation,
         data: InputChangePasswordSchema,
 
@@ -61,7 +66,10 @@ async def change_user_password_init(
     # Работа сервиса
     await user_service.init_change_password(data, user_id)
 
-    return {"message": "email message sent"}
+    return OutputSentEmailSchema(
+        message="email message sent.",
+        rate_minutes=rate_minutes
+    )
 
 
 @user_profile_router.post("/change-password-confirm/{uuid}", status_code=status.HTTP_200_OK)
@@ -85,6 +93,8 @@ async def change_user_password_confirm(
 # Смена электронной почты
 @user_profile_router.post("/change-email", status_code=status.HTTP_200_OK)
 async def change_user_email_init(
+        rate_minutes: EmailRequestLimitAnnotation,
+
         access_payload: AccessRequiredAnnotation,
         user_service: UserServiceAnnotation,
 
@@ -93,7 +103,10 @@ async def change_user_email_init(
         access_token = Header(default=None, description="JWT-токен"),
 ):
     await user_service.init_change_email(user_id=access_payload['sub'], data=data)
-    return {"message": "email message sent"}
+    return OutputSentEmailSchema(
+        message="email message sent.",
+        rate_minutes=rate_minutes
+    )
 
 
 @user_profile_router.post("/change-email-confirm/{uuid}", status_code=status.HTTP_200_OK)

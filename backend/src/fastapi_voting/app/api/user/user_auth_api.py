@@ -13,13 +13,16 @@ from src.fastapi_voting.app.di.annotations import (
 
     AccessRequiredAnnotation,
     RefreshRequiredAnnotation,
-    CSRFValidAnnotation
+    CSRFValidAnnotation,
+
+    EmailRequestLimitAnnotation
 )
 from src.fastapi_voting.app.schemas.user_schema import (
     UserSchema,
     InputCreateUserSchema,
     InputLoginUserSchema, ResponseLoginUserSchema,
-    OutputRefreshUserSchema
+    OutputRefreshUserSchema,
+    OutputSentEmailSchema
 )
 
 # --- Инструментарий и обработчик ---
@@ -31,13 +34,15 @@ user_auth_router = APIRouter(
 )
 
 # --- Регистрация пользователя ---
-@user_auth_router.post("/register", status_code=status.HTTP_200_OK)
+@user_auth_router.post("/register", status_code=status.HTTP_200_OK, response_model=OutputSentEmailSchema)
 async def user_register_init(
+        rate_minutes: EmailRequestLimitAnnotation,
+
         data: InputCreateUserSchema,
         user_service: UserServiceAnnotation,
 ):
     await user_service.init_register(data)
-    return {"message": "email sent"}
+    return OutputSentEmailSchema(message="email message sent", rate_minutes=rate_minutes)
 
 
 @user_auth_router.post("/register-confirm/{uuid}", response_model=UserSchema, status_code=status.HTTP_201_CREATED)

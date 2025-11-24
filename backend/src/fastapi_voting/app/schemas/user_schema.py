@@ -63,3 +63,9 @@ class InputChangePasswordSchema(BaseModel):
 class InputChangeEmailSchema(BaseModel):
     email: str
     password: str
+
+
+# --- Схемы для ответов АПИ с кд для почты ---
+class OutputSentEmailSchema(BaseModel):
+    message: str
+    rate_minutes: int
