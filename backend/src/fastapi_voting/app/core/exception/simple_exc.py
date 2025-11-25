@@ -36,4 +36,4 @@ class TaskNotFound(AppException):
 # --- Исключения для ограничения запросов ---
 class TooManyRequests(AnomalyException):
     def __init__(self, log_message: str, extra_data: list[str]):
-        super().__init__(log_detail=log_message, detail="Too Many Requests", status_code=status.HTTP_404_NOT_FOUND, extra_data=extra_data)
+        super().__init__(log_detail=log_message, detail="Too Many Requests", status_code=status.HTTP_429_TOO_MANY_REQUESTS, extra_data=extra_data)
