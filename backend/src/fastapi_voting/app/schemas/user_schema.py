@@ -33,8 +33,19 @@ class InputLoginUserSchema(BaseModel):
     password: str
     remember_me: bool
 
+class LoginUserSchema(BaseModel):
+    id: int
+    first_name: str
+    last_name: str
+    surname: str
+    email: str
+    role: RolesEnum
+
+    class Config:
+        from_attributes = True
+
 class ResponseLoginUserSchema(BaseModel):
-    user: UserSchema
+    user: LoginUserSchema
     access_token: str
 
     class Config:
