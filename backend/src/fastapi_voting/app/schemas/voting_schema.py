@@ -2,6 +2,8 @@ from datetime import datetime
 
 from pydantic import BaseModel
 
+from src.fastapi_voting.app.core.enums import QuestionTypeEnum
+
 
 # --- Общая схема со всеми полями ---
 class VotingSchema(BaseModel):
@@ -22,6 +24,14 @@ class VotingSchema(BaseModel):
 
 
 # --- Схемы для создания голосования ---
+class CreateVotingOptionSchema(BaseModel):
+    option: str
+
+class CreateVotingQuestionSchema(BaseModel):
+    type: QuestionTypeEnum
+    title: str
+    options: list[CreateVotingOptionSchema]
+
 class InputCreateVotingSchema(BaseModel):
     title: str
     theme: str
@@ -33,6 +43,7 @@ class InputCreateVotingSchema(BaseModel):
 
     voting_start: datetime
     voting_end: datetime
+    questions: list[CreateVotingQuestionSchema]
 
 
 # --- Схема для удаления пользования ---
