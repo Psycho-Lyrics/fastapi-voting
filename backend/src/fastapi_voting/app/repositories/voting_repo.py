@@ -1,6 +1,7 @@
 import logging
 
 from sqlalchemy import select, and_, or_, func
+from sqlalchemy.orm import aliased
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.fastapi_voting.app.core.settings import get_settings
@@ -32,8 +33,10 @@ class VotingRepo(Base):
     async def available_votings(self, user_id: int, find: str | None, page: int, archived: bool) -> tuple:
         """Возвращает перечень доступных конкретному пользователю голосований"""
 
-        # --- Формирование фильтрующего запроса ---
-        query = select(Voting).outerjoin(Voting.registered_users).where(
+        # Формирование фильтрующего запроса
+        creator = aliased(User)
+
+        query = select(Voting, creator.id, creator.first_name, creator.last_name).join(creator, Voting.creator).outerjoin(Voting.registered_users).where(
             and_(
                 Voting.deleted == False,
                 Voting.archived == archived,
@@ -58,4 +61,4 @@ class VotingRepo(Base):
 
         # --- Ответ ---
         result = await self.session.execute(query)
-        return result.scalars().all(), total_count.scalar()
+        return result.all(), total_count.scalar()
