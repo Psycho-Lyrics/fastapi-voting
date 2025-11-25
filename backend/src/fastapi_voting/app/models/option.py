@@ -14,12 +14,8 @@ class Option(Base):
 
     # --- Внешние ключи таблицы ---
     question_id: Mapped[int] = mapped_column(ForeignKey('questions.id', ondelete='CASCADE'))
-    voting_id: Mapped[int] = mapped_column(ForeignKey('votings.id'))
-
-    # --- ОРМ-модели ---
 
     # Many-to-One
-    voting: Mapped["Voting"] = relationship(back_populates="options", foreign_keys=voting_id)
     question: Mapped["Question"] = relationship(back_populates="options", foreign_keys=question_id)
 
     # One-to-Many

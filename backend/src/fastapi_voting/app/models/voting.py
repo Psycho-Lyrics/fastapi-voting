@@ -1,4 +1,5 @@
 from datetime import datetime, timezone
+from shutil import make_archive
 
 from typing import List
 
@@ -31,7 +32,7 @@ class Voting(Base):
     voting_start: Mapped[timezone] = mapped_column(TIMESTAMP(timezone=True))
     voting_end: Mapped[timezone] = mapped_column(TIMESTAMP(timezone=True))
 
-    archived: Mapped[bool] = mapped_column(nullable=True)
+    archived: Mapped[bool] = mapped_column(default=False)
     archive_after: Mapped[timezone | None] = mapped_column(TIMESTAMP(timezone=True))
 
     deleted: Mapped[bool] = mapped_column(default=False)
@@ -47,7 +48,6 @@ class Voting(Base):
     # One-to-Many
     votes: Mapped[List['Vote']] = relationship(back_populates="voting", cascade="all, delete-orphan")
     questions: Mapped[List['Question']] = relationship(back_populates="voting", cascade="all, delete-orphan")
-    options: Mapped["Option"] = relationship(back_populates="voting", cascade="all, delete-orphan")
 
     # Many-to-Many
     departments: Mapped[List['Department']] = relationship(secondary=voting_department_association_table, back_populates="votings")
