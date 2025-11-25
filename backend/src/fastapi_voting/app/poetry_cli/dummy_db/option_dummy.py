@@ -21,7 +21,6 @@ async def get_fake_options(session: AsyncSession, questions: set[Question])  -> 
         option = Option(
             option=faker.text(),
             question_id=question.id,
-            voting_id=question.voting_id,
         )
         options.add(option)
 

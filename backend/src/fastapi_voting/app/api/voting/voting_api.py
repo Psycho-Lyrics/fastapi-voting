@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Query, Header
+from fastapi import APIRouter, Query, Header, status
 
 from src.fastapi_voting.app.di.annotations import (
     VotingServiceAnnotation,
@@ -35,7 +35,7 @@ async def get_all_votings(
     return response
 
 
-@voting_router.post(path="/create", response_model=VotingSchema)
+@voting_router.post(path="/create", response_model=VotingSchema, status_code=status.HTTP_201_CREATED)
 async def create_voting(
         access_payload: AccessRequiredAnnotation,
 
