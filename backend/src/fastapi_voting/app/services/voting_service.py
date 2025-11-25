@@ -5,10 +5,12 @@ from src.fastapi_voting.app.core.settings import get_settings
 
 from src.fastapi_voting.app.repositories.voting_repo import VotingRepo
 
-from src.fastapi_voting.app.models import Voting
+from src.fastapi_voting.app.models import Voting, Question, Option
 
-from src.fastapi_voting.app.schemas.voting_schema import ResponseAllVotingsSchema, InputCreateVotingSchema, \
-    OutputAllVotingsSchema
+from src.fastapi_voting.app.schemas.voting_schema import (
+    ResponseAllVotingsSchema, OutputAllVotingsSchema,
+    InputCreateVotingSchema,
+)
 
 from src.fastapi_voting.app.core.exception.simple_exc import VotingNotFound
 
@@ -24,12 +26,22 @@ class VotingService:
         self.voting_repo = voting_repo
 
 
-    async def create_voting(self, voting_data: InputCreateVotingSchema, user_id: int) -> Voting:
+    async def create_voting(self, voting_data: InputCreateVotingSchema, creator_id: int) -> Voting:
 
         # Работа с первичными данными
         voting_data = voting_data.model_dump()
-        voting_data["creator_id"] = user_id
+        voting_data["creator_id"] = creator_id
 
+        # Формирование записи о вопросах голосования
+        res_questions = list()
+
+        for question in voting_data["questions"]:
+            question["options"] = list(map(lambda option: Option(**option), question["options"]))
+            res_questions.append(Question(**question))
+        else:
+            voting_data["questions"] = res_questions
+
+        # Работа репозитория и ответ
         voting = await self.voting_repo.add_instance(voting_data)
         return voting
 
