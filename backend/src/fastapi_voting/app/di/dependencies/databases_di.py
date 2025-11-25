@@ -18,8 +18,3 @@ async def get_db() -> AsyncSession:
     async with AsyncSessionLocal() as session:
         yield session
         await session.close()
-
-
-async def get_redis() -> Redis:
-    redis_client = Redis.from_url(settings.get_redis_url())
-    return redis_client

@@ -1,4 +1,4 @@
-from fastapi import Depends
+from fastapi import Depends, Request
 
 from fastapi_csrf_protect import CsrfProtect
 
@@ -6,12 +6,10 @@ from redis.asyncio import Redis
 
 from src.fastapi_voting.app.services.subservice.token_service import TokenService
 
-from src.fastapi_voting.app.di.dependencies.databases_di import get_redis
-
 
 # --- Определение зависимостей для токенов ---
 async def get_token_service(
-        redis_client: Redis = Depends(get_redis),
+        request: Request,
         csrf_protect: CsrfProtect = Depends(),
 ):
-    return TokenService(redis_client, csrf_protect)
+    return TokenService(request.app.state.redis, csrf_protect)

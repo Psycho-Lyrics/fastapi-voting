@@ -11,8 +11,6 @@ from jose.exceptions import ExpiredSignatureError, JWTError
 from src.fastapi_voting.app.core.settings import get_settings
 from src.fastapi_voting.app.core.enums import TokenTypeEnum
 
-from src.fastapi_voting.app.di.dependencies.databases_di import get_redis
-
 from src.fastapi_voting.app.core.factory.token_exception_factory import TokenExceptionFactory
 
 
@@ -30,9 +28,9 @@ class AuthTokenRequired:
     async def __call__(
             self,
             request: Request,
-            redis_client: Redis = Depends(get_redis),
     ):
         # --- Хэндлер и входные данные ---
+        redis_client = request.app.state.redis
         token_exc = TokenExceptionFactory.get_handler(token_type=self.token_type)
         token = self.extract_token(request)
 

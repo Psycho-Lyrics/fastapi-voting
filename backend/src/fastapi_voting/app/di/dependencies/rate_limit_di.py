@@ -4,8 +4,6 @@ from redis.asyncio import Redis
 
 from fastapi import Request, Depends
 
-from src.fastapi_voting.app.di.dependencies.databases_di import get_redis
-
 from src.fastapi_voting.app.core.exception.simple_exc import TooManyRequests
 
 from src.fastapi_voting.app.core.settings import get_settings
@@ -21,9 +19,10 @@ class ApiLimiterDI: # TODO: Реализована модель фиксиров
         self.times = times
         self.minutes = minutes
 
-    async def __call__(self, request: Request, redis: Redis = Depends(get_redis)):
+    async def __call__(self, request: Request):
 
         # Первичные данные
+        redis = request.app.state.redis
         valid_response = self.minutes
         client_ip = request.headers.get("X-Real-IP")
         request_uri = request.url.path
